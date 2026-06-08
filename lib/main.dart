@@ -16,7 +16,7 @@ class MyApp extends StatelessWidget {
       title: 'Dhuwitku',
       theme: ThemeData(
         useMaterial3: true,
-        pageTransitionsTheme: const PageTransitionsTheme(
+        pageTransitionsTheme: PageTransitionsTheme(
           builders: {
             TargetPlatform.android: CupertinoPageTransitionsBuilder(),
             TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
