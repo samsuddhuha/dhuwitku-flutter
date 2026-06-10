@@ -57,7 +57,11 @@ class BaseVm extends ChangeNotifier {
     } else {
       notifyListeners();
       if (message != null) {
-        SnackbarHelper.show(context, message);
+        SnackbarHelper.show(
+          context,
+          message,
+          duration: const Duration(seconds: 10),
+        );
       }
     }
   }

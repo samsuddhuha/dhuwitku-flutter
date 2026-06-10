@@ -1,6 +1,5 @@
 import 'package:dhuwitku/core/base/base_response.dart';
 import 'package:dhuwitku/network/config/app_client.dart';
-import 'package:dhuwitku/network/remotedata/auth/model/register_user_model.dart';
 import 'package:dio/dio.dart';
 
 class AuthRemoteData {
@@ -19,7 +18,10 @@ class AuthRemoteData {
 
       return BaseResponse.handle(response.data);
     } on DioException catch (e) {
-      throw Exception(e.response?.data['message'] ?? 'failed');
+      throw Exception(
+        e.response?.data['message'] ??
+            'ERROR: ${e.type} || ${e.message} || ${e.response}',
+      );
     }
   }
 
