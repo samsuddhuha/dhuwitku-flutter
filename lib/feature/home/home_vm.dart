@@ -1,212 +1,228 @@
-// import 'package:flutter/material.dart';
-// import 'package:inacash_ewallet/core/base/base_vm.dart';
+import 'package:dhuwitku/core/base/base_vm.dart';
+import 'package:flutter/material.dart';
 
-// class HomeVm extends BaseVm {
-//   final BuildContext context;
+class HomeVm extends BaseVm {
+  final BuildContext context;
 
-//   // final UserRemoteData _userRemoteData = UserRemoteData();
-//   // final TransactionRemoteData _transactionRemoteData = TransactionRemoteData();
-//   final ScrollController scrollController = ScrollController();
+  // final UserRemoteData _userRemoteData = UserRemoteData();
+  // final TransactionRemoteData _transactionRemoteData = TransactionRemoteData();
+  final ScrollController scrollController = ScrollController();
 
-//   HomeVm(this.context);
+  HomeVm(this.context);
 
-//   // UserModel? user;
-//   // MerchantModel? merchant;
-//   // bool? isAllMerchantSelected;
-//   // BalanceModel? balance;
-//   // bool? isPinExist;
-//   // bool isMerchantNonActive = false;
-//   // DateTime startDate = DateTime.now();
-//   // DateTime endDate = DateTime.now();
+  // UserModel? user;
+  // MerchantModel? merchant;
+  // bool? isAllMerchantSelected;
+  // BalanceModel? balance;
+  // bool? isPinExist;
+  // bool isMerchantNonActive = false;
+  // DateTime startDate = DateTime.now();
+  // DateTime endDate = DateTime.now();
 
-//   // final List<QrisDataModel> transactions = [];
-//   // bool isLastPage = false;
-//   // bool isLoadingBalance = false;
-//   // int page = 1;
-//   // bool isHidebalance = true;
-//   // int selectedFilter = 0;
-//   // DateTime lastGetBalanceAt = DateTime.now();
+  // final List<QrisDataModel> transactions = [];
+  // bool isLastPage = false;
+  // bool isLoadingBalance = false;
+  // int page = 1;
+  // bool isHidebalance = true;
+  // int selectedFilter = 0;
+  // DateTime lastGetBalanceAt = DateTime.now();
 
-//   Future<void> init() async {
-//     // scrollController.addListener(_onScroll);
+  Future<void> init() async {
+    // scrollController.addListener(_onScroll);
 
-//     // getUser();
-//     // getMerchant();
-//     // getPinStatus();
-//     // updateDateRange(0);
+    // getUser();
+    // getMerchant();
+    // getPinStatus();
+    // updateDateRange(0);
 
-//     // getBalance();
-//     // getListTransaction();
-//   }
+    // getBalance();
+    // getListTransaction();
+  }
 
-//   // Future<void> getUser() async {
-//   //   user = await Session.instance.getUser();
-//   //   notifyListeners();
-//   // }
+  String getBalanceText() {
+    return 'Rp1.500.000';
+  }
 
-//   // Future<void> getMerchant() async {
-//   //   merchant = await Session.instance.getMerchant();
-//   //   await getIsAllMerchantSelected();
-//   //   checkMerchantStatus();
-//   //   notifyListeners();
-//   // }
+  String getMonthlySpendText() {
+    return 'Rp750.000';
+  }
 
-//   // Future<void> getIsAllMerchantSelected() async {
-//   //   isAllMerchantSelected = await Session.instance.isAllMerchantSelected();
-//   // }
+  String getDailySpendText() {
+    return 'Rp50.000';
+  }
 
-//   // Future<void> checkMerchantStatus() async {
-//   //   final isAllSelected =
-//   //       await Session.instance.isAllMerchantSelected() ?? false;
+  void onTopUpClicked() {
+    // TODO: implement top up
+  }
 
-//   //   if (isAllSelected) {
-//   //     isMerchantNonActive = false;
-//   //   } else {
-//   //     isMerchantNonActive =
-//   //         merchant?.nmid == null ||
-//   //         merchant!.nmid!.isEmpty ||
-//   //         merchant?.raw == null ||
-//   //         merchant!.raw!.isEmpty;
-//   //   }
+  // Future<void> getUser() async {
+  //   user = await Session.instance.getUser();
+  //   notifyListeners();
+  // }
 
-//   //   notifyListeners();
-//   // }
+  // Future<void> getMerchant() async {
+  //   merchant = await Session.instance.getMerchant();
+  //   await getIsAllMerchantSelected();
+  //   checkMerchantStatus();
+  //   notifyListeners();
+  // }
 
-//   // String merchantName() {
-//   //   if (isAllMerchantSelected != true) {
-//   //     return merchant?.name ?? '-';
-//   //   } else {
-//   //     return 'Semua Merchant';
-//   //   }
-//   // }
+  // Future<void> getIsAllMerchantSelected() async {
+  //   isAllMerchantSelected = await Session.instance.isAllMerchantSelected();
+  // }
 
-//   // Future<void> getBalance() async {
-//   //   try {
-//   //     isLoadingBalance = true;
-//   //     final response = await _userRemoteData.getBalance(
-//   //       startDate: startDate.toStringDate(format: 'yyyy-MM-dd'),
-//   //       endDate: endDate.toStringDate(format: 'yyyy-MM-dd'),
-//   //     );
-//   //     final data = response['data'] as Map<String, dynamic>;
-//   //     balance = BalanceModel.fromJson(data);
-//   //     lastGetBalanceAt = DateTime.now();
-//   //     isLoadingBalance = false;
-//   //     notifyListeners();
-//   //   } catch (e) {
-//   //     if (!context.mounted) return;
-//   //     isLoadingBalance = false;
-//   //     setError(context, e.toString().replaceFirst('Exception: ', ''));
-//   //   }
-//   // }
+  // Future<void> checkMerchantStatus() async {
+  //   final isAllSelected =
+  //       await Session.instance.isAllMerchantSelected() ?? false;
 
-//   // Future<void> getPinStatus() async {
-//   //   if (isPinExist == true) {
-//   //     return;
-//   //   }
-//   //   try {
-//   //     final response = await _userRemoteData.getPinStatus();
-//   //     final data = response['data'] as Map<String, dynamic>;
-//   //     isPinExist = data['status'] as bool?;
-//   //     notifyListeners();
-//   //   } catch (e) {
-//   //     if (!context.mounted) return;
-//   //     setError(context, e.toString().replaceFirst('Exception: ', ''));
-//   //   }
-//   // }
+  //   if (isAllSelected) {
+  //     isMerchantNonActive = false;
+  //   } else {
+  //     isMerchantNonActive =
+  //         merchant?.nmid == null ||
+  //         merchant!.nmid!.isEmpty ||
+  //         merchant?.raw == null ||
+  //         merchant!.raw!.isEmpty;
+  //   }
 
-//   // Future<void> pullRefresh() async {
-//   //   page = 1;
-//   //   getListTransaction();
-//   // }
+  //   notifyListeners();
+  // }
 
-//   // Future<void> getListTransaction() async {
-//   //   try {
-//   //     showLoading(context, true);
-//   //     final merchantId = await Session.instance.isAllMerchantSelected() == true
-//   //         ? ''
-//   //         : merchant?.id.toString() ?? '';
+  // String merchantName() {
+  //   if (isAllMerchantSelected != true) {
+  //     return merchant?.name ?? '-';
+  //   } else {
+  //     return 'Semua Merchant';
+  //   }
+  // }
 
-//   //     final response = await _transactionRemoteData.historyCashIn(
-//   //       page: page,
-//   //       startDate: startDate.toStringDate(format: 'yyyy-MM-dd'),
-//   //       endDate: endDate.toStringDate(format: 'yyyy-MM-dd'),
-//   //       userQrisId: merchantId.isEmpty ? null : merchantId,
-//   //     );
+  // Future<void> getBalance() async {
+  //   try {
+  //     isLoadingBalance = true;
+  //     final response = await _userRemoteData.getBalance(
+  //       startDate: startDate.toStringDate(format: 'yyyy-MM-dd'),
+  //       endDate: endDate.toStringDate(format: 'yyyy-MM-dd'),
+  //     );
+  //     final data = response['data'] as Map<String, dynamic>;
+  //     balance = BalanceModel.fromJson(data);
+  //     lastGetBalanceAt = DateTime.now();
+  //     isLoadingBalance = false;
+  //     notifyListeners();
+  //   } catch (e) {
+  //     if (!context.mounted) return;
+  //     isLoadingBalance = false;
+  //     setError(context, e.toString().replaceFirst('Exception: ', ''));
+  //   }
+  // }
 
-//   //     isLastPage = !(response['has_next_page'] ?? false);
+  // Future<void> getPinStatus() async {
+  //   if (isPinExist == true) {
+  //     return;
+  //   }
+  //   try {
+  //     final response = await _userRemoteData.getPinStatus();
+  //     final data = response['data'] as Map<String, dynamic>;
+  //     isPinExist = data['status'] as bool?;
+  //     notifyListeners();
+  //   } catch (e) {
+  //     if (!context.mounted) return;
+  //     setError(context, e.toString().replaceFirst('Exception: ', ''));
+  //   }
+  // }
 
-//   //     final List<QrisDataModel> list = (response['histories'] as List)
-//   //         .map((e) => QrisDataModel.fromJson(e))
-//   //         .toList();
+  // Future<void> pullRefresh() async {
+  //   page = 1;
+  //   getListTransaction();
+  // }
 
-//   //     if (page == 1) {
-//   //       transactions.clear();
-//   //       transactions.addAll(list);
-//   //     } else {
-//   //       transactions.addAll(list);
-//   //     }
+  // Future<void> getListTransaction() async {
+  //   try {
+  //     showLoading(context, true);
+  //     final merchantId = await Session.instance.isAllMerchantSelected() == true
+  //         ? ''
+  //         : merchant?.id.toString() ?? '';
 
-//   //     if (!context.mounted) return;
-//   //     showLoading(context, false);
-//   //   } catch (e) {
-//   //     if (!context.mounted) return;
-//   //     showLoading(context, false);
-//   //     setError(context, e.toString().replaceFirst('Exception: ', ''));
-//   //   }
-//   // }
+  //     final response = await _transactionRemoteData.historyCashIn(
+  //       page: page,
+  //       startDate: startDate.toStringDate(format: 'yyyy-MM-dd'),
+  //       endDate: endDate.toStringDate(format: 'yyyy-MM-dd'),
+  //       userQrisId: merchantId.isEmpty ? null : merchantId,
+  //     );
 
-//   // (DateTime startDate, DateTime endDate) initDefaultDateRange(int countDay) {
-//   //   final now = DateTime.now();
+  //     isLastPage = !(response['has_next_page'] ?? false);
 
-//   //   final endDate = DateTime(now.year, now.month, now.day, 12, 0, 0, 0);
+  //     final List<QrisDataModel> list = (response['histories'] as List)
+  //         .map((e) => QrisDataModel.fromJson(e))
+  //         .toList();
 
-//   //   final startDate = endDate.subtract(Duration(days: countDay));
+  //     if (page == 1) {
+  //       transactions.clear();
+  //       transactions.addAll(list);
+  //     } else {
+  //       transactions.addAll(list);
+  //     }
 
-//   //   return (startDate, endDate);
-//   // }
+  //     if (!context.mounted) return;
+  //     showLoading(context, false);
+  //   } catch (e) {
+  //     if (!context.mounted) return;
+  //     showLoading(context, false);
+  //     setError(context, e.toString().replaceFirst('Exception: ', ''));
+  //   }
+  // }
 
-//   // void updateDateRange(int rangeCountDay) {
-//   //   final (start, end) = initDefaultDateRange(rangeCountDay);
+  // (DateTime startDate, DateTime endDate) initDefaultDateRange(int countDay) {
+  //   final now = DateTime.now();
 
-//   //   startDate = start;
-//   //   endDate = end;
+  //   final endDate = DateTime(now.year, now.month, now.day, 12, 0, 0, 0);
 
-//   //   notifyListeners();
-//   // }
+  //   final startDate = endDate.subtract(Duration(days: countDay));
 
-//   // void _onScroll() {
-//   //   if (!scrollController.hasClients) return;
+  //   return (startDate, endDate);
+  // }
 
-//   //   final threshold = 100.0;
-//   //   final maxScroll = scrollController.position.maxScrollExtent;
-//   //   final currentScroll = scrollController.position.pixels;
+  // void updateDateRange(int rangeCountDay) {
+  //   final (start, end) = initDefaultDateRange(rangeCountDay);
 
-//   //   if (maxScroll - currentScroll <= threshold) {
-//   //     if (!isLoading && !isLastPage) {
-//   //       page++;
-//   //       getListTransaction();
-//   //     }
-//   //   }
-//   // }
+  //   startDate = start;
+  //   endDate = end;
 
-//   // void updateSelectedFilter(int filter) {
-//   //   selectedFilter = filter;
-//   //   page = 1;
-//   //   updateDateRange(filter);
+  //   notifyListeners();
+  // }
 
-//   //   getBalance();
-//   //   getListTransaction();
-//   //   notifyListeners();
-//   // }
+  // void _onScroll() {
+  //   if (!scrollController.hasClients) return;
 
-//   // void updateIsHideBalance() {
-//   //   isHidebalance = !isHidebalance;
-//   //   notifyListeners();
-//   // }
+  //   final threshold = 100.0;
+  //   final maxScroll = scrollController.position.maxScrollExtent;
+  //   final currentScroll = scrollController.position.pixels;
 
-//   @override
-//   void dispose() {
-//     scrollController.dispose();
-//     super.dispose();
-//   }
-// }
+  //   if (maxScroll - currentScroll <= threshold) {
+  //     if (!isLoading && !isLastPage) {
+  //       page++;
+  //       getListTransaction();
+  //     }
+  //   }
+  // }
+
+  // void updateSelectedFilter(int filter) {
+  //   selectedFilter = filter;
+  //   page = 1;
+  //   updateDateRange(filter);
+
+  //   getBalance();
+  //   getListTransaction();
+  //   notifyListeners();
+  // }
+
+  // void updateIsHideBalance() {
+  //   isHidebalance = !isHidebalance;
+  //   notifyListeners();
+  // }
+
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
+  }
+}

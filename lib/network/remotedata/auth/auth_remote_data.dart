@@ -6,26 +6,6 @@ import 'package:dio/dio.dart';
 class AuthRemoteData {
   final _client = AppClient.instance;
 
-  Future<bool> validateUser(String email) async {
-    try {
-      final response = await _client.dioDeleteAccount.get(
-        '/exec',
-        queryParameters: {'email': email},
-        options: Options(
-          validateStatus: (status) => status != null && status < 400,
-        ),
-      );
-
-      if (response.data is Map) {
-        return response.data['found'] == true;
-      }
-
-      return false;
-    } on DioException {
-      return false;
-    }
-  }
-
   Future<Map<String, dynamic>> login({
     required String email,
     required String password,
@@ -33,8 +13,8 @@ class AuthRemoteData {
   }) async {
     try {
       final response = await _client.dioAuth.post(
-        'user/login',
-        data: {'email': email, 'password': password, 'fcmtoken': fcm},
+        'login',
+        data: {'email': email, 'password': password, 'fcm': fcm},
       );
 
       return BaseResponse.handle(response.data);
@@ -44,12 +24,14 @@ class AuthRemoteData {
   }
 
   Future<Map<String, dynamic>> register({
-    required RegisterUserModel registerData,
+    required String name,
+    required String email,
+    required String password,
   }) async {
     try {
       final response = await _client.dioAuth.post(
-        'user/register',
-        data: registerData.toJson(),
+        'register',
+        data: {'name': name, 'email': email, 'password': password},
       );
 
       return BaseResponse.handle(response.data);

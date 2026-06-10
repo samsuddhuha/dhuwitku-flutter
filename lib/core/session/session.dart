@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:dhuwitku/network/remotedata/auth/model/user_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Session {
@@ -25,12 +26,7 @@ class Session {
   // In-memory cache
   // ========================
   String? _token;
-  // bool _isReloadData = false;
-  // bool _isReloadMerchant = false;
-
   String? get token => _token;
-  // bool get isReloadData => _isReloadData;
-  // bool get isReloadMerchant => _isReloadMerchant;
 
   bool _isSessionExpiredSheetShown = false;
   bool get isSessionExpiredSheetShown => _isSessionExpiredSheetShown;
@@ -63,138 +59,19 @@ class Session {
     await prefs.setString(_keyUser, jsonEncode(user));
   }
 
-  // /// 🧑 Ambil user
-  // Future<UserModel?> getUser() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   final data = prefs.getString(_keyUser);
-  //   if (data == null || data.isEmpty) return null;
-  //   return UserModel.fromJson(jsonDecode(data));
-  // }
+  /// 🧑 Ambil user
+  Future<UserModel?> getUser() async {
+    final prefs = await SharedPreferences.getInstance();
+    final data = prefs.getString(_keyUser);
+    if (data == null || data.isEmpty) return null;
+    return UserModel.fromJson(jsonDecode(data));
+  }
 
   // /// ✅ Cek login
   Future<bool> isLoggedIn() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getBool(_keyIsLoggedIn) ?? false;
   }
-
-  // ========================
-  // Merchant
-  // ========================
-
-  // /// 🏪 Simpan merchant terpilih
-  // Future<void> saveMerchant(Map<String, dynamic> merchant) async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   await prefs.setString(_keyMerchant, jsonEncode(merchant));
-  // }
-
-  // Future<MerchantModel?> getMerchant() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   final data = prefs.getString(_keyMerchant);
-  //   if (data == null || data.isEmpty) return null;
-  //   return MerchantModel.fromJson(jsonDecode(data));
-  // }
-
-  // /// 🏪 Simpan list merchant
-  // Future<void> saveListMerchant(List merchants) async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   await prefs.setString(_keyMerchantList, jsonEncode(merchants));
-  // }
-
-  // Future<List<MerchantModel>?> getListMerchant() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   final data = prefs.getString(_keyMerchantList);
-  //   if (data == null || data.isEmpty) return null;
-
-  //   final List list = jsonDecode(data);
-  //   return list.map((e) => MerchantModel.fromJson(e)).toList();
-  // }
-
-  /// 🔁 Semua merchant terpilih
-  // Future<void> setAllMerchantSelected(bool value) async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   await prefs.setBool(_keyIsAllMerchantSelected, value);
-  // }
-
-  // Future<bool?> isAllMerchantSelected() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   return prefs.getBool(_keyIsAllMerchantSelected);
-  // }
-
-  // ========================
-  // Reload Data Flag
-  // ========================
-
-  // Future<void> setReloadData(bool value) async {
-  //   _isReloadData = value;
-  //   final prefs = await SharedPreferences.getInstance();
-  //   await prefs.setBool(_keyIsReloadData, value);
-  // }
-
-  // Future<void> loadIsReloadData() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   _isReloadData = prefs.getBool(_keyIsReloadData) ?? false;
-  // }
-
-  // Future<void> setReloadMerchant(bool value) async {
-  //   _isReloadMerchant = value;
-  //   final prefs = await SharedPreferences.getInstance();
-  //   await prefs.setBool(_keyIsReloadMerchant, value);
-  // }
-
-  // Future<void> loadIsReloadMerchant() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   _isReloadMerchant = prefs.getBool(_keyIsReloadMerchant) ?? false;
-  // }
-
-  // Future<void> setRedirectToQrisPage(bool value) async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   await prefs.setBool(_keyIsRedirectToQrisPage, value);
-  // }
-
-  // Future<bool?> isRedirectToQrisPage() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   return prefs.getBool(_keyIsRedirectToQrisPage);
-  // }
-
-  // Future<void> setQrisStatic(bool value) async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   await prefs.setBool(_keyIsQrisStatic, value);
-  // }
-
-  // Future<bool?> isQrisStatic() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   return prefs.getBool(_keyIsQrisStatic);
-  // }
-
-  // Future<void> setLoadPinStatus(bool value) async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   await prefs.setBool(_keyIsLoadPinStatus, value);
-  // }
-
-  // Future<bool?> isLoadPinStatus() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   return prefs.getBool(_keyIsLoadPinStatus);
-  // }
-
-  // Future<void> setSelectedIndexBottomNavbar(int value) async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   await prefs.setInt(_keySelectedIndexBottomNavbar, value);
-  // }
-
-  // Future<int?> getSelectedIndexBottomNavbar() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   return prefs.getInt(_keySelectedIndexBottomNavbar);
-  // }
-
-  // Future<void> setSelectedIndexTabReport(int value) async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   await prefs.setInt(_keySelectedIndexTabReport, value);
-  // }
-
-  // Future<int?> getSelectedIndexTabReport() async {
-  //   final prefs = await SharedPreferences.getInstance();
-  //   return prefs.getInt(_keySelectedIndexTabReport);
-  // }
 
   void markSessionExpiredSheetShown() {
     _isSessionExpiredSheetShown = true;

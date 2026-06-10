@@ -1,9 +1,9 @@
 class BaseResponse {
   static Map<String, dynamic> handle(Map<String, dynamic> json) {
-    final rc = json['rc'];
+    final code = json['code'];
     final message = json['message'];
 
-    if (rc == 0) {
+    if (code == '200') {
       return json;
     }
 

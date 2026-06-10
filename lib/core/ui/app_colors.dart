@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   static const white = Color(0xFFFFFFFF);
+  static const tundora = Color(0xDD000000);
 
   // Brand
   static const primary = Color(0xFFE31E36);

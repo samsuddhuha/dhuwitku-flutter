@@ -16,8 +16,6 @@ class AppImages {
   static const icHomeInactive = 'assets/images/ic_home_inactive.png';
   static const icHistory = 'assets/images/ic_history.png';
   static const icHistoryInactive = 'assets/images/ic_history_inactive.png';
-  static const icQris = 'assets/images/ic_qris.png';
-  static const icQr = 'assets/images/ic_qr.png';
   static const icPlus = 'assets/images/ic_plus.png';
   static const icTransfer = 'assets/images/ic_transfer.png';
   static const icPayment = 'assets/images/ic_payment.png';

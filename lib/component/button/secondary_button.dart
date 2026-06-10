@@ -17,47 +17,39 @@ class SecondaryButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final Color activeColor = Colors.white;
     final Color disabledColor = Colors.grey.shade300;
 
     return SizedBox(
       width: double.infinity,
       height: 52,
-      child: DecoratedBox(
-        decoration: BoxDecoration(
-          color: isEnabled ? AppColors.darkGrey : disabledColor,
-          borderRadius: BorderRadius.circular(24),
-        ),
-        child: ElevatedButton(
-          onPressed: isEnabled && !isLoading ? onPressed : null,
-          style: ButtonStyle(
-            backgroundColor: const WidgetStatePropertyAll(Colors.transparent),
-            shadowColor: const WidgetStatePropertyAll(Colors.transparent),
-            surfaceTintColor: const WidgetStatePropertyAll(Colors.transparent),
-            overlayColor: const WidgetStatePropertyAll(Colors.transparent),
-            elevation: const WidgetStatePropertyAll(0),
-            shape: WidgetStatePropertyAll(
-              RoundedRectangleBorder(borderRadius: BorderRadius.circular(24)),
-            ),
+      child: ElevatedButton(
+        onPressed: isEnabled && !isLoading ? onPressed : null,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: isEnabled ? activeColor : disabledColor,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: BorderSide(color: AppColors.tundora, width: 1),
           ),
-          child: isLoading
-              ? const SizedBox(
-                  width: 22,
-                  height: 22,
-                  child: CircularProgressIndicator(
-                    strokeWidth: 2.5,
-                    color: AppColors.secondary,
-                  ),
-                )
-              : Text(
-                  text,
-                  style: TextStyle(
-                    fontSize: 14,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                  textAlign: TextAlign.center,
-                ),
+          elevation: 0,
         ),
+        child: isLoading
+            ? const SizedBox(
+                width: 22,
+                height: 22,
+                child: CircularProgressIndicator(
+                  strokeWidth: 2.5,
+                  color: AppColors.tundora,
+                ),
+              )
+            : Text(
+                text,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: AppColors.tundora,
+                ),
+              ),
       ),
     );
   }

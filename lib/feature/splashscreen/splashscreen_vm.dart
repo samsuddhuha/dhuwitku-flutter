@@ -3,6 +3,7 @@ import 'package:dhuwitku/core/session/session.dart';
 import 'package:dhuwitku/feature/login/login_page.dart';
 import 'package:dhuwitku/feature/main/main_tab_page.dart';
 import 'package:dhuwitku/network/config/app_client.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
 class SplashScreenVm extends BaseVm {
@@ -16,18 +17,19 @@ class SplashScreenVm extends BaseVm {
     // await RemoteConfigService.instance.forceRefresh();
 
     AppClient.instance.init();
-    await Future.delayed(const Duration(milliseconds: 1500));
+    if (!kIsWeb) {
+      await Future.delayed(const Duration(milliseconds: 1500));
+    }
 
     if (!context.mounted) return;
 
     final isLoggedIn = await Session.instance.isLoggedIn();
 
-    // if (isLoggedIn && Session.instance.token != null) {
-    //   goToHome();
-    // } else {
-    //   goToLogin();
-    // }
-    goToLogin();
+    if (isLoggedIn && Session.instance.token != null) {
+      goToHome();
+    } else {
+      goToLogin();
+    }
   }
 
   void goToLogin() {
@@ -38,9 +40,9 @@ class SplashScreenVm extends BaseVm {
   }
 
   void goToHome() {
-    // Navigator.pushReplacement(
-    //   context,
-    //   MaterialPageRoute(builder: (_) => const MainTabPage()),
-    // );
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => const MainTabPage()),
+    );
   }
 }

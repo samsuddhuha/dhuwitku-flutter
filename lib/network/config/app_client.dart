@@ -35,7 +35,7 @@ class AppClient {
           onRequest: (options, handler) {
             final token = Session.instance.token;
             if (token != null && token.isNotEmpty) {
-              options.headers['Authorization'] = 'Bearer $token';
+              options.headers['x-access-token'] = token;
             }
             handler.next(options);
           },
@@ -47,24 +47,4 @@ class AppClient {
 
     return dio;
   }
-
-  // (Google Script)
-  static const String baseUrlDeleteAccount =
-      'https://script.google.com/macros/s/AKfycby6k8eNalDIliv4Myj3QUhxTgLIKpZjrOP6a3_VhudHhlYE7SvsXIT44uL_yx6nzoMzmw';
-
-  late final Dio dioDeleteAccount = Dio(
-    BaseOptions(
-      baseUrl: baseUrlDeleteAccount,
-      connectTimeout: const Duration(seconds: 60),
-      receiveTimeout: const Duration(seconds: 60),
-      headers: {
-        'Accept': 'application/json',
-        'Content-Type': 'application/json',
-      },
-      validateStatus: (status) {
-        return status != null && status < 400;
-      },
-      followRedirects: true,
-    ),
-  )..interceptors.add(PrettyDioLogger());
 }

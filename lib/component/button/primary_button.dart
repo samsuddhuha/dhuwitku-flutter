@@ -24,8 +24,8 @@ class PrimaryButton extends StatelessWidget {
       height: 52,
       child: DecoratedBox(
         decoration: BoxDecoration(
-          color: isEnabled ? AppColors.white : disabledColor,
-          borderRadius: BorderRadius.circular(24),
+          color: isEnabled ? Colors.black87 : disabledColor,
+          borderRadius: BorderRadius.circular(16),
         ),
         child: ElevatedButton(
           onPressed: isEnabled && !isLoading ? onPressed : null,
@@ -33,7 +33,7 @@ class PrimaryButton extends StatelessWidget {
             backgroundColor: Colors.transparent,
             shadowColor: Colors.transparent,
             shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(24),
+              borderRadius: BorderRadius.circular(16),
             ),
             elevation: 0,
           ),
@@ -49,9 +49,9 @@ class PrimaryButton extends StatelessWidget {
               : Text(
                   text,
                   style: TextStyle(
-                    fontSize: 14,
+                    fontSize: 16,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.darkGrey, // warna teks saat tombol aktif
+                    color: AppColors.white,
                   ),
                   textAlign: TextAlign.center,
                 ),

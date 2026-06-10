@@ -15,7 +15,7 @@ class Navbar extends StatelessWidget implements PreferredSizeWidget {
     required this.title,
     this.onPressed,
     this.backgroundColor = Colors.transparent,
-    this.isWhite = true,
+    this.isWhite = false,
   });
 
   @override

@@ -1,3 +1,4 @@
+import 'package:dhuwitku/core/ui/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class SnackbarHelper {
@@ -10,16 +11,13 @@ class SnackbarHelper {
       SnackBar(
         content: Text(
           message,
-          style: const TextStyle(
-            color: Colors.black87,
-            fontSize: 14,
-          ),
+          style: const TextStyle(color: AppColors.white, fontSize: 14),
         ),
         duration: duration,
         behavior: SnackBarBehavior.floating,
         margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
-        backgroundColor: Colors.white,
+        backgroundColor: AppColors.tundora,
       ),
     );
   }

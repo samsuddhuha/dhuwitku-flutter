@@ -25,9 +25,9 @@ class GoogleButton extends StatelessWidget {
       child: TextButton(
         onPressed: active ? onPressed : null,
         style: TextButton.styleFrom(
-          backgroundColor: AppColors.darkGrey,
+          backgroundColor: AppColors.tundora,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(24),
+            borderRadius: BorderRadius.circular(16),
             side: const BorderSide(color: AppColors.darkGrey),
           ),
           padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -48,7 +48,7 @@ class GoogleButton extends StatelessWidget {
                   Text(
                     text,
                     style: TextStyle(
-                      fontSize: 14,
+                      fontSize: 16,
                       fontWeight: FontWeight.bold,
                       color: AppColors.white, // warna teks saat tombol aktif
                     ),

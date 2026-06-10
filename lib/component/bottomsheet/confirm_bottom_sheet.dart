@@ -1,5 +1,6 @@
 import 'package:dhuwitku/component/button/primary_button.dart';
 import 'package:dhuwitku/component/button/secondary_button.dart';
+import 'package:dhuwitku/component/button/transparent_button.dart';
 import 'package:dhuwitku/core/ui/text_app.dart';
 import 'package:flutter/material.dart';
 
@@ -212,7 +213,7 @@ void showConfirmBottomSheet({
                       if (negativeText != null &&
                           negativeText.trim().isNotEmpty)
                         Expanded(
-                          child: SecondaryButton(
+                          child: TransparentButton(
                             text: negativeText,
                             isEnabled: true,
                             onPressed: () {

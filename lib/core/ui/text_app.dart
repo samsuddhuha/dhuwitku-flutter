@@ -1,3 +1,4 @@
+import 'package:dhuwitku/core/ui/app_colors.dart';
 import 'package:flutter/material.dart';
 
 enum AppTextStyle { h1, h2, h3, h4, h5, h6, body, small, xSmall, verySmall }
@@ -169,7 +170,7 @@ class TextApp extends StatelessWidget {
       style: TextStyle(
         fontSize: _getFontSize(context),
         fontWeight: fontWeight ?? FontWeight.normal,
-        color: color ?? Colors.white,
+        color: color ?? AppColors.tundora,
         height: height ?? 1.2,
         letterSpacing: letterSpacing ?? 0.25,
         fontFamily: "HostGrotesk",

@@ -41,7 +41,7 @@ class InputField extends StatefulWidget {
     this.enabled = true,
     this.readOnly = false,
     this.textAlign = TextAlign.left,
-    this.fontSize = 12,
+    this.fontSize = 14,
     this.fontWeight = FontWeight.normal,
     this.rightIconPath,
     this.onTap,
@@ -75,7 +75,7 @@ class _InputFieldState extends State<InputField> {
     final bool hasError =
         widget.errorText != null && widget.errorText!.isNotEmpty;
 
-    // Color borderColor = hasError ? AppColors.error : AppColors.surfaceGrey;
+    Color borderColor = hasError ? AppColors.error : AppColors.silver;
 
     Widget? prefixIcon;
     BoxConstraints? prefixConstraints;
@@ -83,12 +83,7 @@ class _InputFieldState extends State<InputField> {
     if (widget.leftIconPath != null) {
       prefixIcon = Padding(
         padding: const EdgeInsets.only(left: 12, right: 8),
-        child: Image.asset(
-          widget.leftIconPath!,
-          width: 20,
-          height: 20,
-          color: AppColors.white,
-        ),
+        child: Image.asset(widget.leftIconPath!, width: 20, height: 20),
       );
       prefixConstraints = const BoxConstraints(maxHeight: 20, maxWidth: 40);
     }
@@ -108,12 +103,7 @@ class _InputFieldState extends State<InputField> {
     } else if (widget.rightIconPath != null) {
       suffixIcon = Padding(
         padding: const EdgeInsets.only(right: 12),
-        child: Image.asset(
-          widget.rightIconPath!,
-          width: 20,
-          height: 20,
-          color: AppColors.white,
-        ),
+        child: Image.asset(widget.rightIconPath!, width: 20, height: 20),
       );
       suffixConstraints = const BoxConstraints(maxHeight: 20, maxWidth: 40);
     }
@@ -130,122 +120,81 @@ class _InputFieldState extends State<InputField> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (widget.title.isNotEmpty) ...[
-          TextApp.xSmall(widget.title),
+          TextApp.small(
+            widget.title,
+            color: AppColors.tundora,
+            fontWeight: FontWeight.w500,
+          ),
           const SizedBox(height: 6),
         ],
 
-        ClipRRect(
-          borderRadius: BorderRadius.circular(20),
+        TextField(
+          controller: widget.controller,
+          obscureText: _obscure,
+          keyboardType: widget.keyboardType,
+          onChanged: widget.onChanged,
+          readOnly: widget.onTap != null || widget.readOnly,
+          onTap: widget.onTap,
+          enabled: widget.enabled,
+          minLines: widget.minLines,
+          maxLines: widget.maxLines,
+          maxLength: widget.maxLength, // include maxlength
+          textAlign: widget.textAlign,
+          buildCounter:
+              (_, {required currentLength, required isFocused, maxLength}) {
+                return const SizedBox.shrink(); // disable default counter
+              },
+          style: TextStyle(
+            fontSize: widget.fontSize,
+            color: (widget.enabled || widget.readOnly)
+                ? AppColors.textPrimary
+                : AppColors.grey,
+            fontWeight: widget.fontWeight,
+          ),
+          decoration: InputDecoration(
+            hintText: widget.hintText,
+            hintStyle: TextStyle(
+              fontSize: widget.fontSize,
+              color: AppColors.grey,
+              fontWeight: widget.fontWeight,
+            ),
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: 14,
+              vertical: widget.maxLines > 1 ? 12 : 14,
+            ),
+            filled: true,
+            fillColor: widget.enabled ? AppColors.white : AppColors.surfaceGrey,
 
-          child: BackdropFilter(
-            filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-
-            child: Container(
-              decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(20),
-
-                // glass color
-                color: Colors.white.withOpacity(0.08),
-
-                // glass border
-                border: Border.all(
-                  color: Colors.white.withOpacity(0.18),
-                  width: 1.2,
-                ),
-
-                // soft shadow
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
-                    blurRadius: 20,
-                    offset: const Offset(0, 8),
-                  ),
-                ],
-              ),
-              child: TextField(
-                controller: widget.controller,
-                obscureText: _obscure,
-                keyboardType: widget.keyboardType,
-                onChanged: widget.onChanged,
-                readOnly: widget.onTap != null || widget.readOnly,
-                onTap: widget.onTap,
-                enabled: widget.enabled,
-                minLines: widget.minLines,
-                maxLines: widget.maxLines,
-                maxLength: widget.maxLength, // include maxlength
-                textAlign: widget.textAlign,
-                buildCounter:
-                    (
-                      _, {
-                      required currentLength,
-                      required isFocused,
-                      maxLength,
-                    }) {
-                      return const SizedBox.shrink(); // disable default counter
-                    },
-                style: TextStyle(
-                  fontSize: widget.fontSize,
-                  color: (widget.enabled || widget.readOnly)
-                      ? AppColors.white
-                      : AppColors.white,
-                  fontWeight: widget.fontWeight,
-                ),
-                decoration: InputDecoration(
-                  hintText: widget.hintText,
-                  hintStyle: TextStyle(
-                    fontSize: widget.fontSize,
-                    color: AppColors.lightGrey,
-                    fontWeight: widget.fontWeight,
-                  ),
-                  contentPadding: EdgeInsets.symmetric(
-                    horizontal: 14,
-                    vertical: widget.maxLines > 1 ? 12 : 14,
-                  ),
-                  filled: true,
-                  // fillColor: widget.enabled
-                  //     ? AppColors.surfaceGrey
-                  //     : AppColors.surfaceGrey,
-                  fillColor: Colors.transparent,
-                  border: InputBorder.none,
-
-                  // enabledBorder: OutlineInputBorder(
-                  //   borderRadius: BorderRadius.circular(16),
-                  //   borderSide: BorderSide(color: borderColor),
-                  // ),
-                  // focusedBorder: OutlineInputBorder(
-                  //   borderRadius: BorderRadius.circular(16),
-                  //   borderSide: const BorderSide(
-                  //     color: AppColors.secondary,
-                  //     width: 1,
-                  //   ),
-                  // ),
-                  // errorBorder: OutlineInputBorder(
-                  //   borderRadius: BorderRadius.circular(16),
-                  //   borderSide: const BorderSide(color: AppColors.error),
-                  // ),
-                  // focusedErrorBorder: OutlineInputBorder(
-                  //   borderRadius: BorderRadius.circular(16),
-                  //   borderSide: const BorderSide(color: AppColors.error),
-                  // ),
-                  // disabledBorder: OutlineInputBorder(
-                  //   borderRadius: BorderRadius.circular(16),
-                  //   borderSide: BorderSide(
-                  //     color: AppColors.surfaceGrey.withValues(alpha: 0.6),
-                  //   ),
-                  // ),
-                  enabledBorder: InputBorder.none,
-                  focusedBorder: InputBorder.none,
-                  errorBorder: InputBorder.none,
-                  focusedErrorBorder: InputBorder.none,
-                  disabledBorder: InputBorder.none,
-
-                  prefixIcon: prefixIcon,
-                  prefixIconConstraints: prefixConstraints,
-                  suffixIcon: suffixIcon,
-                  suffixIconConstraints: suffixConstraints,
-                ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: borderColor),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(
+                color: AppColors.secondary,
+                width: 1,
               ),
             ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: AppColors.error),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: AppColors.error),
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: AppColors.surfaceGrey.withValues(alpha: 0.6),
+              ),
+            ),
+
+            prefixIcon: prefixIcon,
+            prefixIconConstraints: prefixConstraints,
+            suffixIcon: suffixIcon,
+            suffixIconConstraints: suffixConstraints,
           ),
         ),
 
