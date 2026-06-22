@@ -1,299 +1,397 @@
-// import 'package:flutter/material.dart';
-// import 'package:inacash_ewallet/component/field/input_field.dart';
-// import 'package:inacash_ewallet/core/ui/app_colors.dart';
-// import 'package:inacash_ewallet/core/ui/app_images.dart';
-// import 'package:inacash_ewallet/core/ui/text_app.dart';
-// import 'package:inacash_ewallet/feature/account/account_page.dart';
-// import 'package:inacash_ewallet/feature/report/report_vm.dart';
-// import 'package:inacash_ewallet/main.dart';
-// import 'package:provider/provider.dart';
+import 'dart:ui';
 
-// class ReportPage extends StatefulWidget {
-//   const ReportPage({super.key});
+import 'package:dhuwitku/component/divider/divider_app.dart';
+import 'package:dhuwitku/component/field/input_dropdown.dart';
+import 'package:dhuwitku/component/field/input_field.dart';
+import 'package:dhuwitku/component/label/label.dart';
+import 'package:dhuwitku/component/navbar/navbar.dart';
+import 'package:dhuwitku/core/ui/app_colors.dart';
+import 'package:dhuwitku/core/ui/app_images.dart';
+import 'package:dhuwitku/core/ui/text_app.dart';
+import 'package:dhuwitku/feature/report/report_vm.dart';
+import 'package:dhuwitku/util/extension/date_extension.dart';
+import 'package:dhuwitku/util/extension/int_extension.dart';
+import 'package:dhuwitku/util/extension/string_extension.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
-//   @override
-//   State<ReportPage> createState() => _ReportPageState();
-// }
+class ReportPage extends StatefulWidget {
+  const ReportPage({super.key});
 
-// class _ReportPageState extends State<ReportPage> with RouteAware {
-//   ReportVm? _vm;
-//   late TabController _tabController;
-//   int _currentIndex = 0;
+  @override
+  State<ReportPage> createState() => _ReportPageState();
+}
 
-//   // @override
-//   // void initState() {
-//   //   super.initState();
-//   //   _tabController = TabController(length: 2, vsync: this);
-//   //   _tabController.addListener(() {
-//   //     _vm?.changeTab(_tabController.index);
-//   //   });
-//   //   _loadSelectedIndexTabReport();
-//   // }
+class _ReportPageState extends State<ReportPage> with RouteAware {
+  ReportVm? _vm;
 
-//   @override
-//   void didChangeDependencies() {
-//     super.didChangeDependencies();
+  // @override
+  // void initState() {
+  //   super.initState();
+  //   _tabController = TabController(length: 2, vsync: this);
+  //   _tabController.addListener(() {
+  //     _vm?.changeTab(_tabController.index);
+  //   });
+  //   _loadSelectedIndexTabReport();
+  // }
 
-//     final route = ModalRoute.of(context);
-//     if (route is PageRoute) {
-//       routeObserver.subscribe(this, route);
-//     }
-//   }
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
 
-//   @override
-//   void dispose() {
-//     routeObserver.unsubscribe(this);
-//     super.dispose();
-//   }
+    final route = ModalRoute.of(context);
+    if (route is PageRoute) {
+      // routeObserver.subscribe(this, route);
+    }
+  }
 
-//   @override
-//   Future<void> didPopNext() async {
-//     // await Session.instance.loadIsReloadMerchant();
-//     // if (Session.instance.isReloadMerchant) {
-//     //   await _vm!.getMerchant();
-//     //   await Session.instance.setReloadMerchant(false);
-//     // }
+  @override
+  void dispose() {
+    // routeObserver.unsubscribe(this);
+    super.dispose();
+  }
 
-//     // await Session.instance.loadIsReloadData();
-//     // if (Session.instance.isReloadData) {
-//     //   _vm!.pageReportIn = 1;
-//     //   _vm!.pageReportOut = 1;
-//     //   await _vm!.getListTransaction();
-//     //   await Session.instance.setReloadData(false);
-//     // }
-//   }
+  @override
+  Future<void> didPopNext() async {}
 
-//   // Future<void> _loadSelectedIndexTabReport() async {
-//   //   final result = await Session.instance.getSelectedIndexTabReport();
-//   //   await Session.instance.setSelectedIndexTabReport(0);
-//   //   setState(() {
-//   //     _currentIndex = result ?? 0;
-//   //     _vm?.changeTab(_currentIndex);
-//   //   });
-//   // }
+  @override
+  Widget build(BuildContext context) {
+    return ChangeNotifierProvider(
+      create: (context) {
+        final vm = ReportVm(context);
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          vm.init();
+        });
+        return vm;
+      },
+      child: Consumer<ReportVm>(
+        builder: (context, vm, _) {
+          _vm = vm;
+          return PopScope(
+            canPop: false,
+            child: Scaffold(
+              extendBodyBehindAppBar: true,
+              extendBody: true,
+              backgroundColor: Colors.white,
+              appBar: Navbar(title: 'Riwayat'),
+              body: SafeArea(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      child: InputField(
+                        title: "Bulan & Tahun",
+                        hintText: "Pilih bulan dan tahun",
+                        controller: vm.monthYearController,
+                        onTap: () {
+                          vm.openSelectDate();
+                        },
+                      ),
+                    ),
+                    const SizedBox(height: 16),
+                    _buildDhuwitCard(vm),
+                    SizedBox(height: 16),
 
-//   @override
-//   Widget build(BuildContext context) {
-//     final dummyTransactions = [
-//       {
-//         "icon": AppImages.icPayment,
-//         "date": "Hari ini, 09:50",
-//         "description": "Bopet Mini",
-//         "price": "- Rp 119.000",
-//       },
-//       {
-//         "icon": AppImages.icTransfer,
-//         "date": "Hari ini, 08:12",
-//         "description": "Top Up Saldo",
-//         "price": "+ Rp 500.000",
-//       },
-//       {
-//         "icon": AppImages.icTransfer,
-//         "date": "Kemarin, 21:14",
-//         "description": "Transfer ke Andi",
-//         "price": "- Rp 75.000",
-//       },
-//     ];
-//     return ChangeNotifierProvider(
-//       create: (context) {
-//         final vm = ReportVm(context);
-//         WidgetsBinding.instance.addPostFrameCallback((_) {
-//           vm.init();
-//         });
-//         return vm;
-//       },
-//       child: Consumer<ReportVm>(
-//         builder: (context, vm, _) {
-//           _vm = vm;
-//           return Scaffold(
-//             // bottomNavigationBar: Container(
-//             //   color: AppColors.white,
-//             //   padding: EdgeInsets.fromLTRB(
-//             //     16,
-//             //     16,
-//             //     16,
-//             //     60 + MediaQuery.of(context).padding.bottom,
-//             //   ),
-//             //   child: SizedBox(),
-//             // ),
-//             body: Container(
-//               width: double.infinity,
-//               height: double.infinity,
-//               padding: const EdgeInsets.symmetric(horizontal: 16),
-//               decoration: const BoxDecoration(
-//                 image: DecorationImage(
-//                   image: AssetImage(AppImages.bgBlackRed),
-//                   fit: BoxFit.cover, // penting biar full layar
-//                 ),
-//               ),
-//               child: SafeArea(
-//                 child: Column(
-//                   crossAxisAlignment: CrossAxisAlignment.start,
-//                   children: [
-//                     Padding(
-//                       padding: const EdgeInsets.only(top: 14, bottom: 16),
-//                       child: Row(
-//                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-//                         children: [
-//                           Expanded(
-//                             child: Padding(
-//                               padding: const EdgeInsets.only(right: 12),
-//                               child: InputField(
-//                                 title: '',
-//                                 hintText: 'Cari',
-//                                 leftIconPath: AppImages.icSearch,
-//                                 controller: vm.searchController,
-//                                 onChanged: vm.onSearch,
-//                               ),
-//                             ),
-//                           ),
-//                           GestureDetector(
-//                             onTap: () {
-//                               Navigator.push(
-//                                 context,
-//                                 MaterialPageRoute(
-//                                   builder: (_) => const AccountPage(),
-//                                 ),
-//                               );
-//                             },
-//                             child: Image.asset(
-//                               AppImages.icUserBlue,
-//                               fit: BoxFit.contain,
-//                               width: 40,
-//                             ),
-//                           ),
-//                         ],
-//                       ),
-//                     ),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16),
+                      child: Row(
+                        children: [
+                          Label(
+                            text: 'Semua',
+                            size: LabelSize.medium,
+                            color: vm.incomeActive && vm.spendActive
+                                ? LabelColor.green
+                                : LabelColor.grey,
+                            onTap: () {
+                              vm.updateSelectedFilter(
+                                incomeActive: true,
+                                spendActive: true,
+                              );
+                            },
+                          ),
+                          SizedBox(width: 8),
+                          Label(
+                            text: 'Pemasukan',
+                            size: LabelSize.medium,
+                            color: vm.incomeActive
+                                ? LabelColor.green
+                                : LabelColor.grey,
+                            onTap: () {
+                              vm.updateSelectedFilter(
+                                incomeActive: true,
+                                spendActive: false,
+                              );
+                            },
+                          ),
+                          SizedBox(width: 8),
+                          Label(
+                            text: 'Pengeluaran',
+                            size: LabelSize.medium,
+                            color: vm.spendActive
+                                ? LabelColor.green
+                                : LabelColor.grey,
+                            onTap: () {
+                              vm.updateSelectedFilter(
+                                incomeActive: false,
+                                spendActive: true,
+                              );
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Expanded(child: _buildHistoryCard(vm)),
+                  ],
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
 
-//                     const SizedBox(height: 24),
+  Widget _buildDhuwitCard(ReportVm vm) {
+    return Container(
+      margin: const EdgeInsets.only(left: 16, right: 16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      decoration: BoxDecoration(
+        color: AppColors.white,
+        borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: AppColors.lightGrey, width: 1),
+      ),
+      child: Row(
+        children: [
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextApp.small('Ringkasan Bulan Ini'),
+                SizedBox(height: 8),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              TextApp.small(
+                                'Pemasukan',
+                                color: AppColors.darkGrey,
+                              ),
+                              SizedBox(width: 4),
+                              Image.asset(
+                                AppImages.icIn,
+                                width: 14,
+                                height: 14,
+                                fit: BoxFit.contain,
+                                color: AppColors.green,
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 4),
+                          TextApp.body(
+                            vm.getMonthlyIncomeText(),
+                            textAlign: TextAlign.end,
+                            color: AppColors.tundora,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ],
+                      ),
+                    ),
 
-//                     Expanded(
-//                       child: ListView.separated(
-//                         itemCount: dummyTransactions.length,
-//                         separatorBuilder: (_, __) =>
-//                             Divider(color: Colors.transparent, height: 24),
-//                         itemBuilder: (context, index) {
-//                           final item = dummyTransactions[index];
+                    Expanded(
+                      child: Column(
+                        children: [
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              TextApp.small(
+                                'Pengeluaran',
+                                color: AppColors.darkGrey,
+                              ),
+                              SizedBox(width: 4),
+                              Image.asset(
+                                AppImages.icOut,
+                                width: 14,
+                                height: 14,
+                                fit: BoxFit.contain,
+                                color: AppColors.crimsonRed,
+                              ),
+                            ],
+                          ),
+                          SizedBox(height: 4),
+                          TextApp.body(
+                            vm.getMonthlySpendText(),
+                            textAlign: TextAlign.end,
+                            color: AppColors.tundora,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
-//                           return InkWell(
-//                             borderRadius: BorderRadius.circular(16),
-//                             onTap: () {},
-//                             child: _buildTransactionItem(
-//                               iconPath: item["icon"] as String,
-//                               iconColor: AppColors.secondary,
-//                               date: item["date"] as String,
-//                               description: item["description"] as String,
-//                               price: item["price"] as String,
-//                             ),
-//                           );
-//                         },
-//                       ),
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//             ),
-//           );
-//         },
-//       ),
-//     );
-//   }
+  Widget _buildHistoryCard(ReportVm vm) {
+    final transactions = vm.listHistoryDhuwit;
 
-//   Widget _buildTransactionItem({
-//     bool showNumber = false,
-//     int? number,
-//     required String iconPath,
-//     required Color iconColor,
-//     required String description,
-//     required String date,
-//     required String price,
-//   }) {
-//     return Container(
-//       padding: EdgeInsets.fromLTRB(0, 4, 0, 10),
-//       child: Row(
-//         children: [
-//           if (showNumber) ...[
-//             TextApp.xSmall(number.toString(), fontWeight: FontWeight.w600),
-//             const SizedBox(width: 12),
-//           ],
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.only(left: 16, right: 16),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(32),
+        color: Colors.white.withValues(alpha: 0.10),
+        border: Border.all(
+          color: Colors.white.withValues(alpha: 0.20),
+          width: 1,
+        ),
+      ),
+      child: Column(
+        children: [
+          if (transactions.isEmpty)
+            _buildEmptyState()
+          else
+            Expanded(
+              child: ListView.separated(
+                padding: EdgeInsets.zero,
+                itemCount: transactions.length,
+                separatorBuilder: (_, __) => const SizedBox(height: 16),
+                itemBuilder: (context, index) {
+                  final item = transactions[index];
+                  final isIn = item.status == 1;
+                  final date = (item.dateDhuwit ?? '');
 
-//           Container(
-//             width: 40,
-//             height: 40,
-//             decoration: BoxDecoration(
-//               color: AppColors.white,
-//               shape: BoxShape.circle,
-//             ),
-//             child: Center(
-//               child: Image.asset(
-//                 iconPath,
-//                 width: 18,
-//                 height: 18,
-//                 fit: BoxFit.contain,
-//                 color: iconColor,
-//               ),
-//             ),
-//           ),
+                  return InkWell(
+                    borderRadius: BorderRadius.circular(16),
+                    onTap: () {
+                      vm.openUpdatePage(
+                        '${item.id}',
+                        item.status,
+                        item.nominal,
+                        item.information,
+                        item.dateDhuwit,
+                      );
+                    },
+                    child: _buildTransactionItem(
+                      iconPath: isIn ? AppImages.icIn : AppImages.icOut,
+                      iconColor: isIn ? AppColors.green : AppColors.crimsonRed,
+                      date: date.toDate().toStringDate(
+                        format: date.contains(':')
+                            ? 'EEEE, dd MMM yyyy HH:mm'
+                            : 'EEEE, dd MMM yyyy',
+                      ),
+                      description: item.information ?? '',
+                      price: "${isIn ? '+' : '-'} ${item.nominal?.toRupiah()}",
+                    ),
+                  );
+                },
+              ),
+            ),
+        ],
+      ),
+    );
+  }
 
-//           const SizedBox(width: 12),
+  Widget _buildTransactionItem({
+    bool showNumber = false,
+    int? number,
+    required String iconPath,
+    required Color iconColor,
+    required String description,
+    required String date,
+    required String price,
+  }) {
+    return Container(
+      padding: EdgeInsets.fromLTRB(0, 4, 0, 10),
+      child: Row(
+        children: [
+          if (showNumber) ...[
+            TextApp.xSmall(number.toString(), fontWeight: FontWeight.w600),
+            const SizedBox(width: 12),
+          ],
 
-//           Expanded(
-//             child: Column(
-//               crossAxisAlignment: CrossAxisAlignment.start,
-//               children: [
-//                 TextApp.h5(
-//                   description,
-//                   color: AppColors.white,
-//                   fontWeight: FontWeight.w500,
-//                 ),
-//                 const SizedBox(height: 4),
-//                 TextApp.small(
-//                   date,
-//                   maxLines: 1,
-//                   overflow: TextOverflow.ellipsis,
-//                   color: AppColors.grey,
-//                 ),
-//               ],
-//             ),
-//           ),
+          Container(
+            width: 40,
+            height: 40,
+            decoration: BoxDecoration(
+              color: AppColors.white,
+              shape: BoxShape.circle,
+            ),
+            child: Center(
+              child: Image.asset(
+                iconPath,
+                width: 18,
+                height: 18,
+                fit: BoxFit.contain,
+                color: iconColor,
+              ),
+            ),
+          ),
 
-//           const SizedBox(width: 12),
+          const SizedBox(width: 12),
 
-//           Column(
-//             crossAxisAlignment: CrossAxisAlignment.end,
-//             children: [
-//               TextApp.small(
-//                 price,
-//                 color: AppColors.white,
-//                 fontWeight: FontWeight.w600,
-//               ),
-//             ],
-//           ),
-//         ],
-//       ),
-//     );
-//   }
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                TextApp.h5(
+                  description,
+                  color: AppColors.tundora,
+                  fontWeight: FontWeight.w500,
+                ),
+                const SizedBox(height: 4),
+                TextApp.xSmall(
+                  date,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  color: AppColors.darkGrey.withValues(alpha: 0.80),
+                ),
+              ],
+            ),
+          ),
 
-//   // Widget _buildEmptyState(bool isReportIn) {
-//   //   return Center(
-//   //     child: Column(
-//   //       mainAxisAlignment: MainAxisAlignment.center,
-//   //       children: [
-//   //         const SizedBox(height: 16),
-//   //         TextApp.small(
-//   //           'Belum ada transaksi ${isReportIn ? 'masuk' : 'keluar'}',
-//   //           fontWeight: FontWeight.w600,
-//   //           color: AppColors.textPrimary,
-//   //         ),
-//   //         const SizedBox(height: 8),
-//   //         TextApp.xSmall(
-//   //           'Transaksi ${isReportIn ? 'masuk' : 'keluar'} akan muncul di sini',
-//   //           color: AppColors.textSecondary,
-//   //           textAlign: TextAlign.center,
-//   //         ),
-//   //       ],
-//   //     ),
-//   //   );
-//   // }
-// }
+          const SizedBox(width: 12),
+
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              TextApp.body(
+                price,
+                color: AppColors.tundora,
+                fontWeight: FontWeight.w600,
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const SizedBox(height: 32),
+          Image.asset(AppImages.imgEmpty, width: 140, fit: BoxFit.contain),
+          const SizedBox(height: 16),
+          TextApp.body(
+            'Belum ada riwayat pencatatan keuangan',
+            color: AppColors.darkGrey,
+          ),
+        ],
+      ),
+    );
+  }
+}

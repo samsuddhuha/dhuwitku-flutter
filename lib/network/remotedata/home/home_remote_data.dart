@@ -13,4 +13,20 @@ class HomeRemoteData {
       throw Exception(e.response?.data['message'] ?? 'failed');
     }
   }
+
+  Future<Map<String, dynamic>> getDhuwitSummary({
+    required int month,
+    required int year,
+  }) async {
+    try {
+      final response = await _client.dioMain.post(
+        'dashboard/dhuwit-summary',
+        data: {'month': month, 'year': year},
+      );
+
+      return BaseResponse.handle(response.data);
+    } on DioException catch (e) {
+      throw Exception(e.response?.data['message'] ?? 'failed');
+    }
+  }
 }

@@ -1,9 +1,5 @@
 // import 'package:camera/camera.dart';
 // import 'package:flutter/material.dart';
-// import 'package:inacash_bisnis/component/navbar/navbar.dart';
-// import 'package:inacash_bisnis/core/ui/app_colors.dart';
-// import 'package:inacash_bisnis/core/ui/app_images.dart';
-// import 'package:inacash_bisnis/feature/camera/camera_vm.dart';
 // import 'package:provider/provider.dart';
 
 // class CameraPage extends StatefulWidget {

@@ -5,12 +5,16 @@ class DashboardSummaryModel {
   final DhuwitAmplopCount? totalCountAmplop;
   final int totalSpendMonth;
   final int totalSpendDay;
+  final int totalIncomeMonth;
+  final int totalIncomeDay;
 
   DashboardSummaryModel({
     this.totalCountDhuwit,
     this.totalCountAmplop,
     required this.totalSpendMonth,
     required this.totalSpendDay,
+    required this.totalIncomeMonth,
+    required this.totalIncomeDay,
   });
 
   factory DashboardSummaryModel.fromJson(Map<String, dynamic> json) {
@@ -31,6 +35,8 @@ class DashboardSummaryModel {
 
       totalSpendMonth: _parseInt(json['total_spend_month']),
       totalSpendDay: _parseInt(json['total_spend_day']),
+      totalIncomeMonth: _parseInt(json['total_income_month']),
+      totalIncomeDay: _parseInt(json['total_income_day']),
     );
   }
 
@@ -40,6 +46,8 @@ class DashboardSummaryModel {
       'total_count_amplop': totalCountAmplop?.toJson(),
       'total_spend_month': totalSpendMonth,
       'total_spend_day': totalSpendDay,
+      'total_income_month': totalIncomeMonth,
+      'total_income_day': totalIncomeDay,
     };
   }
 

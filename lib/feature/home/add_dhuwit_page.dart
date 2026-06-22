@@ -49,7 +49,11 @@ class AddDhuwitPage extends StatelessWidget {
                 extendBodyBehindAppBar: true,
                 extendBody: true,
                 backgroundColor: Colors.white,
-                appBar: Navbar(title: 'Tambah Data Dhuwit'),
+                appBar: Navbar(
+                  title: idDhuwit == null
+                      ? 'Tambah Data Dhuwit'
+                      : 'Edit Data Dhuwit',
+                ),
                 body: SafeArea(
                   child: SingleChildScrollView(
                     padding: const EdgeInsets.symmetric(horizontal: 16),

@@ -6,6 +6,6 @@ extension IntExtension on int {
   String toRupiah({bool withSymbol = false}) {
     final formatted = NumberFormat.decimalPattern('id_ID').format(this);
 
-    return withSymbol ? "Rp $formatted" : formatted;
+    return withSymbol ? "Rp$formatted" : formatted;
   }
 }

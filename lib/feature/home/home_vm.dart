@@ -8,6 +8,7 @@ import 'package:dhuwitku/network/remotedata/home/home_remote_data.dart';
 import 'package:dhuwitku/network/remotedata/home/model/dashboard_summary_model.dart';
 import 'package:dhuwitku/network/remotedata/report/model/dhuwit_model.dart';
 import 'package:dhuwitku/network/remotedata/report/report_remote_data.dart';
+import 'package:dhuwitku/util/extension/int_extension.dart';
 import 'package:flutter/material.dart';
 
 class HomeVm extends BaseVm {
@@ -51,17 +52,25 @@ class HomeVm extends BaseVm {
     final balance =
         (total?.inCount?.total ?? 0) - (total?.outCount?.total ?? 0);
 
-    return formatRupiah(balance);
+    return balance.toRupiah(withSymbol: true);
   }
 
   String getMonthlySpendText() {
     final value = dashboard?.totalSpendMonth ?? 0;
-    return formatRupiah(value);
+    return value.toRupiah();
   }
 
   String getDailySpendText() {
     final value = dashboard?.totalSpendDay ?? 0;
-    return formatRupiah(value);
+    return value.toRupiah();
+  }
+
+  String getTitleHistory() {
+    final total = listHistoryDhuwit.length >= 10
+        ? '10'
+        : '${listHistoryDhuwit.length}';
+
+    return '$total Riwayat Terbaru';
   }
 
   Future<void> onTopUpClicked() async {
@@ -167,16 +176,6 @@ class HomeVm extends BaseVm {
     }
   }
 
-  String formatRupiah(int value) {
-    final isNegative = value < 0;
-    final formatted = value.abs().toString().replaceAllMapped(
-      RegExp(r'\B(?=(\d{3})+(?!\d))'),
-      (match) => '.',
-    );
-
-    return '${isNegative ? '- ' : ''}Rp$formatted';
-  }
-
   Future<void> getDhuwitHistory() async {
     try {
       isLoadingDashboard = true;
@@ -188,7 +187,7 @@ class HomeVm extends BaseVm {
           .map((e) => DhuwitModel.fromJson(e))
           .toList();
 
-      listHistoryDhuwit = list.reversed.toList();
+      listHistoryDhuwit = list;
 
       isLoadingDashboard = false;
       notifyListeners();

@@ -1,271 +1,194 @@
-// import 'package:flutter/material.dart';
-// import 'package:inacash_ewallet/core/base/base_vm.dart';
+import 'package:dhuwitku/component/bottomsheet/select_date_bottom_sheet.dart';
+import 'package:dhuwitku/core/base/base_vm.dart';
+import 'package:dhuwitku/feature/home/add_dhuwit_page.dart';
+import 'package:dhuwitku/network/remotedata/auth/model/user_model.dart';
+import 'package:dhuwitku/network/remotedata/home/home_remote_data.dart';
+import 'package:dhuwitku/network/remotedata/home/model/dhuwit_summary_model.dart';
+import 'package:dhuwitku/network/remotedata/report/model/dhuwit_model.dart';
+import 'package:dhuwitku/network/remotedata/report/report_remote_data.dart';
+import 'package:dhuwitku/util/extension/int_extension.dart';
+import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
-// class ReportVm extends BaseVm {
-//   final BuildContext context;
-//   // final TransactionRemoteData _transactionRemoteData = TransactionRemoteData();
+class ReportVm extends BaseVm {
+  final BuildContext context;
 
-//   final TextEditingController searchController = TextEditingController();
-//   final ScrollController scrollController = ScrollController();
+  final HomeRemoteData _remoteData = HomeRemoteData();
+  final ReportRemoteData _reportRemoteData = ReportRemoteData();
 
-//   ReportVm(this.context);
+  final ScrollController scrollController = ScrollController();
+  final TextEditingController monthYearController = TextEditingController();
 
-//   int tabIndex = 0;
+  ReportVm(this.context);
 
-//   // MerchantModel? merchant;
-//   bool? isAllMerchantSelected;
-//   DateTime startDate = DateTime.now();
-//   DateTime endDate = DateTime.now();
+  UserModel? user;
+  DhuwitSummaryModel? dhuwitSummary;
+  List<DhuwitModel> allHistoryDhuwit = [];
+  List<DhuwitModel> listHistoryDhuwit = [];
 
-//   // final List<QrisDataModel> transactionsIn = [];
-//   // final List<CashOutModel> transactionsOut = [];
-//   bool isLastPageReportIn = false;
-//   int pageReportIn = 1;
-//   bool isLastPageReportOut = false;
-//   int pageReportOut = 1;
+  bool isLoadingDashboard = false;
 
-//   bool get isReportIn => tabIndex == 0;
+  late int selectedMonth;
+  late int selectedYear;
+  bool incomeActive = true;
+  bool spendActive = true;
 
-//   Future<void> init() async {
-//     // scrollController.addListener(_onScroll);
+  Future<void> init() async {
+    final now = DateTime.now();
 
-//     // getMerchant();
-//     // updateDateRange(7);
-//     // getListTransaction();
-//   }
+    selectedMonth = now.month;
+    selectedYear = now.year;
 
-//   void onSearch(String value) {
-//     // reset pagination state
-//   }
+    monthYearController.text = DateFormat(
+      'MMM yyyy',
+      'id_ID',
+    ).format(DateTime(selectedYear, selectedMonth));
 
-//   // Future<void> getMerchant() async {
-//   //   merchant = await Session.instance.getMerchant();
-//   //   await getIsAllMerchantSelected();
-//   //   notifyListeners();
-//   // }
+    getDhuwitSummary();
+    getDhuwitHistory();
+  }
 
-//   // Future<void> getIsAllMerchantSelected() async {
-//   //   isAllMerchantSelected = await Session.instance.isAllMerchantSelected();
-//   // }
+  String getMonthlySpendText() {
+    final value = dhuwitSummary?.totalSpend ?? 0;
+    return value.toRupiah();
+  }
 
-//   // String merchantName() {
-//   //   if (isAllMerchantSelected != true) {
-//   //     return merchant?.name ?? '-';
-//   //   } else {
-//   //     return 'Semua Merchant';
-//   //   }
-//   // }
+  String getMonthlyIncomeText() {
+    final value = dhuwitSummary?.totalIncome ?? 0;
+    return value.toRupiah();
+  }
 
-//   // Future<void> changeTab(int index) async {
-//   //   if (tabIndex == index) return;
+  Future<void> getDhuwitSummary() async {
+    try {
+      isLoadingDashboard = true;
+      notifyListeners();
 
-//   //   tabIndex = index;
+      final response = await _remoteData.getDhuwitSummary(
+        month: selectedMonth,
+        year: selectedYear,
+      );
 
-//   //   // reset pagination state
-//   //   pageReportIn = 1;
-//   //   pageReportOut = 1;
-//   //   isLastPageReportIn = false;
-//   //   isLastPageReportOut = false;
+      final data = response['data'] as Map<String, dynamic>;
+      dhuwitSummary = DhuwitSummaryModel.fromJson(data);
 
-//   //   // reset scroll ke atas
-//   //   WidgetsBinding.instance.addPostFrameCallback((_) {
-//   //     if (scrollController.hasClients) {
-//   //       scrollController.jumpTo(0);
-//   //     }
-//   //   });
+      isLoadingDashboard = false;
+      notifyListeners();
+    } catch (e) {
+      isLoadingDashboard = false;
 
-//   //   await getListTransaction();
-//   //   notifyListeners();
-//   // }
+      if (!context.mounted) return;
+      setError(context, e.toString().replaceFirst('Exception: ', ''));
 
-//   // Future<void> pullRefresh() async {
-//   //   pageReportIn = 1;
-//   //   pageReportOut = 1;
-//   //   getListTransaction();
-//   // }
+      notifyListeners();
+    }
+  }
 
-//   // Future<void> getListTransaction() async {
-//   //   if (tabIndex == 1) {
-//   //     await getListTransactionOut();
-//   //   } else {
-//   //     await getListTransactionIn();
-//   //   }
-//   // }
+  Future<void> getDhuwitHistory() async {
+    try {
+      isLoadingDashboard = true;
+      notifyListeners();
 
-//   // Future<void> getListTransactionIn() async {
-//   //   try {
-//   //     showLoading(context, true);
-//   //     final merchantId = await Session.instance.isAllMerchantSelected() == true
-//   //         ? ''
-//   //         : merchant?.id.toString() ?? '';
+      final response = await _reportRemoteData.getDhuwitHistory(
+        month: selectedMonth,
+        year: selectedYear,
+      );
 
-//   //     final response = await _transactionRemoteData.historyCashIn(
-//   //       page: pageReportIn,
-//   //       startDate: startDate.toStringDate(format: 'yyyy-MM-dd'),
-//   //       endDate: endDate.toStringDate(format: 'yyyy-MM-dd'),
-//   //       userQrisId: merchantId.isEmpty ? null : merchantId,
-//   //     );
+      final List<DhuwitModel> list = (response['data'] as List)
+          .map((e) => DhuwitModel.fromJson(e))
+          .toList();
 
-//   //     isLastPageReportIn = !(response['has_next_page'] ?? false);
+      allHistoryDhuwit = list;
+      updateListDhuwit();
 
-//   //     final List<QrisDataModel> list = (response['histories'] as List)
-//   //         .map((e) => QrisDataModel.fromJson(e))
-//   //         .toList();
+      isLoadingDashboard = false;
+      notifyListeners();
+    } catch (e) {
+      isLoadingDashboard = false;
 
-//   //     if (pageReportIn == 1) {
-//   //       transactionsIn.clear();
-//   //       transactionsIn.addAll(list);
-//   //     } else {
-//   //       transactionsIn.addAll(list);
-//   //     }
+      if (!context.mounted) return;
+      setError(context, e.toString().replaceFirst('Exception: ', ''));
 
-//   //     if (!context.mounted) return;
-//   //     showLoading(context, false);
-//   //   } catch (e) {
-//   //     if (!context.mounted) return;
-//   //     showLoading(context, false);
-//   //     setError(context, e.toString().replaceFirst('Exception: ', ''));
-//   //   }
-//   // }
+      notifyListeners();
+    }
+  }
 
-//   // Future<void> getListTransactionOut() async {
-//   //   try {
-//   //     showLoading(context, true);
-//   //     final response = await _transactionRemoteData.historyCashOut(
-//   //       page: pageReportOut,
-//   //       startDate: startDate.toStringDate(format: 'yyyy-MM-dd'),
-//   //       endDate: endDate.toStringDate(format: 'yyyy-MM-dd'),
-//   //     );
+  void updateSelectedFilter({
+    required bool incomeActive,
+    required bool spendActive,
+  }) {
+    this.incomeActive = incomeActive;
+    this.spendActive = spendActive;
 
-//   //     isLastPageReportOut = !(response['has_next_page'] ?? false);
+    updateListDhuwit();
 
-//   //     final List<CashOutModel> list = (response['histories'] as List)
-//   //         .map((e) => CashOutModel.fromJson(e))
-//   //         .toList();
+    notifyListeners();
+  }
 
-//   //     if (pageReportOut == 1) {
-//   //       transactionsOut.clear();
-//   //       transactionsOut.addAll(list);
-//   //     } else {
-//   //       transactionsOut.addAll(list);
-//   //     }
+  void updateListDhuwit() {
+    if (incomeActive && spendActive) {
+      listHistoryDhuwit = List.from(allHistoryDhuwit);
+    } else if (incomeActive) {
+      listHistoryDhuwit = allHistoryDhuwit
+          .where((item) => item.status == 1)
+          .toList();
+    } else if (spendActive) {
+      listHistoryDhuwit = allHistoryDhuwit
+          .where((item) => item.status == 2)
+          .toList();
+    } else {
+      listHistoryDhuwit = [];
+    }
 
-//   //     if (!context.mounted) return;
-//   //     showLoading(context, false);
-//   //   } catch (e) {
-//   //     if (!context.mounted) return;
-//   //     showLoading(context, false);
-//   //     setError(context, e.toString().replaceFirst('Exception: ', ''));
-//   //   }
-//   // }
+    notifyListeners();
+  }
 
-//   // (DateTime startDate, DateTime endDate) initDefaultDateRange(int countDay) {
-//   //   final now = DateTime.now();
+  void openSelectDate() {
+    showSelectDateBottomSheet(
+      context: context,
+      type: DatePickerType.monthYear,
+      titleText: "Pilih Bulan & Tahun",
+      buttonText: "Pilih",
+      initialDate: DateTime(selectedYear, selectedMonth),
+      onSelected: (date) async {
+        selectedMonth = date.month;
+        selectedYear = date.year;
 
-//   //   final endDate = DateTime(now.year, now.month, now.day, 12, 0, 0, 0);
+        monthYearController.text = DateFormat('MMM yyyy', 'id_ID').format(date);
 
-//   //   final startDate = endDate.subtract(Duration(days: countDay));
+        await Future.wait([getDhuwitSummary(), getDhuwitHistory()]);
+      },
+    );
+  }
 
-//   //   return (startDate, endDate);
-//   // }
+  Future<void> openUpdatePage(
+    String id,
+    int? status,
+    int? nominal,
+    String? information,
+    String? dateDhuwit,
+  ) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddDhuwitPage(
+          idDhuwit: id,
+          status: status,
+          nominal: nominal,
+          information: information,
+          dateDhuwit: dateDhuwit,
+        ),
+      ),
+    );
 
-//   // void updateDateRange(int rangeCountDay) {
-//   //   final (start, end) = initDefaultDateRange(rangeCountDay);
+    if (result != null && context.mounted) {
+      getDhuwitSummary();
+      getDhuwitHistory();
+    }
+  }
 
-//   //   startDate = start;
-//   //   endDate = end;
-
-//   //   notifyListeners();
-//   // }
-
-//   // Future<void> pickDateRange() async {
-//   //   final now = DateTime.now();
-//   //   final maxRangeDays = 30;
-
-//   //   final DateTimeRange? picked = await showDateRangePicker(
-//   //     context: context,
-//   //     firstDate: now.subtract(Duration(days: maxRangeDays)),
-//   //     lastDate: now,
-//   //     initialDateRange: DateTimeRange(start: startDate, end: endDate),
-//   //     builder: (context, child) {
-//   //       if (child == null) return const SizedBox();
-
-//   //       return Theme(
-//   //         data: Theme.of(context).copyWith(
-//   //           colorScheme: ColorScheme.light(
-//   //             primary: AppColors.primary,
-//   //             onPrimary: Colors.white,
-//   //             secondaryContainer: AppColors.primary.withOpacity(0.15),
-//   //           ),
-//   //         ),
-//   //         child: Localizations(
-//   //           locale: const Locale('id', 'ID'),
-//   //           delegates: const [
-//   //             GlobalMaterialLocalizations.delegate,
-//   //             GlobalWidgetsLocalizations.delegate,
-//   //             GlobalCupertinoLocalizations.delegate,
-//   //           ],
-//   //           child: child,
-//   //         ),
-//   //       );
-//   //     },
-//   //   );
-
-//   //   if (picked != null) {
-//   //     startDate = picked.start;
-//   //     endDate = picked.end;
-//   //     getListTransaction();
-//   //     notifyListeners();
-//   //   }
-//   // }
-
-//   // String getDateLabel() {
-//   //   final start = startDate;
-//   //   final end = endDate;
-
-//   //   final bool sameYear = start.year == end.year;
-
-//   //   if (_isSameDay(start, end)) {
-//   //     return start.toStringDate(format: 'dd MMM yyyy');
-//   //   } else if (sameYear) {
-//   //     final startStr = start.toStringDate(format: 'dd MMM');
-//   //     final endStr = end.toStringDate(format: 'dd MMM yyyy');
-//   //     return '$startStr - $endStr';
-//   //   } else {
-//   //     final startStr = start.toStringDate(format: 'dd MMM yyyy');
-//   //     final endStr = end.toStringDate(format: 'dd MMM yyyy');
-//   //     return '$startStr - $endStr';
-//   //   }
-//   // }
-
-//   // bool _isSameDay(DateTime a, DateTime b) {
-//   //   return a.year == b.year && a.month == b.month && a.day == b.day;
-//   // }
-
-//   // void _onScroll() {
-//   //   if (!scrollController.hasClients) return;
-
-//   //   const threshold = 100.0;
-//   //   final position = scrollController.position;
-
-//   //   if (position.maxScrollExtent - position.pixels > threshold) return;
-
-//   //   final isLastPage = isReportIn ? isLastPageReportIn : isLastPageReportOut;
-
-//   //   if (isLoading || isLastPage) return;
-
-//   //   if (isReportIn) {
-//   //     pageReportIn++;
-//   //     getListTransactionIn();
-//   //   } else {
-//   //     pageReportOut++;
-//   //     getListTransactionOut();
-//   //   }
-//   // }
-
-//   @override
-//   void dispose() {
-//     scrollController.dispose();
-//     super.dispose();
-//   }
-// }
+  @override
+  void dispose() {
+    scrollController.dispose();
+    super.dispose();
+  }
+}

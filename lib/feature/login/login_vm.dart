@@ -10,7 +10,7 @@ class LoginVm extends BaseVm {
   final AuthRemoteData _remote = AuthRemoteData();
 
   LoginVm(this.context) {
-    fillDemoData();
+    // fillDemoData();
   }
 
   final emailController = TextEditingController();

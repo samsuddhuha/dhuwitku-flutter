@@ -7,6 +7,7 @@ import 'package:dhuwitku/core/ui/app_images.dart';
 import 'package:dhuwitku/core/ui/text_app.dart';
 import 'package:dhuwitku/feature/account/account_page.dart';
 import 'package:dhuwitku/feature/home/home_vm.dart';
+import 'package:dhuwitku/feature/report/report_page.dart';
 import 'package:dhuwitku/util/extension/date_extension.dart';
 import 'package:dhuwitku/util/extension/int_extension.dart';
 import 'package:dhuwitku/util/extension/string_extension.dart';
@@ -56,9 +57,11 @@ class _HomePageState extends State<HomePage> with RouteAware {
         builder: (context, vm, _) {
           _vm = vm;
           return PopScope(
-            canPop: true,
+            canPop: false,
             child: Scaffold(
-              backgroundColor: AppColors.white,
+              extendBodyBehindAppBar: true,
+              extendBody: true,
+              backgroundColor: Colors.white,
               floatingActionButton: FloatingActionButton(
                 onPressed: () => _showMicBottomSheet(vm),
                 backgroundColor: AppColors.primaryDark,
@@ -220,7 +223,7 @@ class _HomePageState extends State<HomePage> with RouteAware {
         filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
         child: Container(
           width: double.infinity,
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(32),
             color: Colors.white.withValues(alpha: 0.10),
@@ -235,12 +238,19 @@ class _HomePageState extends State<HomePage> with RouteAware {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   TextApp.body(
-                    'Riwayat',
+                    vm.getTitleHistory(),
                     fontWeight: FontWeight.bold,
                     color: AppColors.tundora,
                   ),
                   GestureDetector(
-                    onTap: () {},
+                    onTap: () async {
+                      final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => ReportPage()),
+                      );
+
+                      if (result != null && context.mounted) {}
+                    },
                     child: Padding(
                       padding: const EdgeInsets.only(left: 16),
                       child: TextApp.small(
@@ -258,6 +268,9 @@ class _HomePageState extends State<HomePage> with RouteAware {
               else
                 Expanded(
                   child: ListView.separated(
+                    physics: const BouncingScrollPhysics(
+                      parent: AlwaysScrollableScrollPhysics(),
+                    ),
                     padding: EdgeInsets.zero,
                     itemCount: transactions.length,
                     separatorBuilder: (_, __) => const SizedBox(height: 16),
@@ -289,7 +302,7 @@ class _HomePageState extends State<HomePage> with RouteAware {
                           ),
                           description: item.information ?? '',
                           price:
-                              "${isIn ? '+' : '-'} ${item.nominal?.toRupiah(withSymbol: true)}",
+                              "${isIn ? '+' : '-'} ${item.nominal?.toRupiah(withSymbol: false)}",
                         ),
                       );
                     },

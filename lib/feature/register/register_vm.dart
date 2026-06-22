@@ -8,7 +8,7 @@ class RegisterVm extends BaseVm {
   final AuthRemoteData _remote = AuthRemoteData();
 
   RegisterVm(this.context) {
-    fillDemoData();
+    // fillDemoData();
   }
 
   final nameController = TextEditingController();
