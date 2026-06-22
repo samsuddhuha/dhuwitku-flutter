@@ -1,9 +1,11 @@
 import 'package:dhuwitku/component/button/primary_button.dart';
 import 'package:dhuwitku/component/button/secondary_button.dart';
+import 'package:dhuwitku/component/button/transparent_button.dart';
 import 'package:dhuwitku/component/divider/divider_app.dart';
 import 'package:dhuwitku/component/field/input_field.dart';
 import 'package:dhuwitku/core/ui/app_colors.dart';
 import 'package:dhuwitku/core/ui/text_app.dart';
+import 'package:dhuwitku/feature/login/forgot_passoword_page.dart';
 import 'package:dhuwitku/feature/login/login_vm.dart';
 import 'package:dhuwitku/feature/register/register_page.dart';
 import 'package:flutter/material.dart';
@@ -65,6 +67,24 @@ class LoginPage extends StatelessWidget {
                           errorText: vm.passwordError,
                           obscureText: true,
                           onChanged: (_) => vm.validatePassword(),
+                        ),
+                        SizedBox(height: 8),
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: GestureDetector(
+                            onTap: () {
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => const ForgotPassowordPage(),
+                                ),
+                              );
+                            },
+                            child: TextApp.small(
+                              'Lupa Kata Sandi?',
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
                         ),
                         SizedBox(height: 32),
                         PrimaryButton(

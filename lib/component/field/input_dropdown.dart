@@ -107,6 +107,7 @@ class InputDropdown extends StatelessWidget {
                   menuController.close();
                 } else {
                   menuController.open();
+                  FocusManager.instance.primaryFocus?.unfocus();
                 }
               },
             );

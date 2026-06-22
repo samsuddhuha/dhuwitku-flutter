@@ -41,4 +41,33 @@ class AuthRemoteData {
       throw Exception(e.response?.data['message'] ?? 'failed');
     }
   }
+
+  Future<Map<String, dynamic>> checkAccount({required String email}) async {
+    try {
+      final response = await _client.dioAuth.post(
+        'check-account',
+        data: {'email': email},
+      );
+
+      return BaseResponse.handle(response.data);
+    } on DioException catch (e) {
+      throw Exception(e.response?.data['message'] ?? 'failed');
+    }
+  }
+
+  Future<Map<String, dynamic>> resetPassword({
+    required String email,
+    required String password,
+  }) async {
+    try {
+      final response = await _client.dioAuth.post(
+        'reset-password',
+        data: {'email': email, 'password': password},
+      );
+
+      return BaseResponse.handle(response.data);
+    } on DioException catch (e) {
+      throw Exception(e.response?.data['message'] ?? 'failed');
+    }
+  }
 }

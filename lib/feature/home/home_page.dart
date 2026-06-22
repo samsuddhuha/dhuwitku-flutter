@@ -168,53 +168,53 @@ class _HomePageState extends State<HomePage> with RouteAware {
 
           const SizedBox(height: 16),
 
-          Row(
-            children: [
-              Expanded(
-                flex: 9,
-                child: TextApp.small(
-                  'Pengeluaran Hari Ini',
-                  color: AppColors.primaryDark,
-                ),
-              ),
-              Expanded(
-                flex: 11,
-                child: vm.isLoadingDashboard
-                    ? shimmerView(height: 16)
-                    : TextApp.small(
+          vm.isLoadingDashboard
+              ? shimmerView(height: 17, width: double.infinity)
+              : Row(
+                  children: [
+                    Expanded(
+                      flex: 9,
+                      child: TextApp.small(
+                        'Pengeluaran Hari Ini',
+                        color: AppColors.primaryDark,
+                      ),
+                    ),
+                    Expanded(
+                      flex: 11,
+                      child: TextApp.small(
                         vm.getDailySpendText(),
                         textAlign: TextAlign.end,
                         color: AppColors.tundora,
                         fontWeight: FontWeight.w800,
                       ),
-              ),
-            ],
-          ),
+                    ),
+                  ],
+                ),
 
           const SizedBox(height: 8),
 
-          Row(
-            children: [
-              Expanded(
-                flex: 9,
-                child: TextApp.small(
-                  'Pengeluaran Bulan Ini',
-                  color: AppColors.primaryDark,
-                ),
-              ),
-              Expanded(
-                flex: 11,
-                child: vm.isLoadingDashboard
-                    ? shimmerView(height: 16)
-                    : TextApp.small(
+          vm.isLoadingDashboard
+              ? shimmerView(height: 17, width: double.infinity)
+              : Row(
+                  children: [
+                    Expanded(
+                      flex: 9,
+                      child: TextApp.small(
+                        'Pengeluaran Bulan Ini',
+                        color: AppColors.primaryDark,
+                      ),
+                    ),
+                    Expanded(
+                      flex: 11,
+                      child: TextApp.small(
                         vm.getMonthlySpendText(),
                         textAlign: TextAlign.end,
                         color: AppColors.tundora,
                         fontWeight: FontWeight.w800,
                       ),
-              ),
-            ],
-          ),
+                    ),
+                  ],
+                ),
         ],
       ),
     );
@@ -342,21 +342,13 @@ class _HomePageState extends State<HomePage> with RouteAware {
             const SizedBox(width: 12),
           ],
 
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: AppColors.white,
-              shape: BoxShape.circle,
-            ),
-            child: Center(
-              child: Image.asset(
-                iconPath,
-                width: 18,
-                height: 18,
-                fit: BoxFit.contain,
-                color: iconColor,
-              ),
+          Center(
+            child: Image.asset(
+              iconPath,
+              width: 18,
+              height: 18,
+              fit: BoxFit.contain,
+              color: iconColor,
             ),
           ),
 
@@ -404,10 +396,6 @@ class _HomePageState extends State<HomePage> with RouteAware {
       padding: const EdgeInsets.fromLTRB(0, 4, 0, 10),
       child: Row(
         children: [
-          ClipOval(child: shimmerView(width: 40, height: 40)),
-
-          const SizedBox(width: 12),
-
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,

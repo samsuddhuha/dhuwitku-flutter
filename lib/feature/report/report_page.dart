@@ -334,21 +334,13 @@ class _ReportPageState extends State<ReportPage> with RouteAware {
             const SizedBox(width: 12),
           ],
 
-          Container(
-            width: 40,
-            height: 40,
-            decoration: BoxDecoration(
-              color: AppColors.white,
-              shape: BoxShape.circle,
-            ),
-            child: Center(
-              child: Image.asset(
-                iconPath,
-                width: 18,
-                height: 18,
-                fit: BoxFit.contain,
-                color: iconColor,
-              ),
+          Center(
+            child: Image.asset(
+              iconPath,
+              width: 18,
+              height: 18,
+              fit: BoxFit.contain,
+              color: iconColor,
             ),
           ),
 
@@ -396,10 +388,6 @@ class _ReportPageState extends State<ReportPage> with RouteAware {
       padding: const EdgeInsets.fromLTRB(0, 4, 0, 10),
       child: Row(
         children: [
-          ClipOval(child: shimmerView(width: 40, height: 40)),
-
-          const SizedBox(width: 12),
-
           Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
