@@ -68,7 +68,7 @@ class AddDhuwitPage extends StatelessWidget {
                           items: ["Pemasukan", "Pengeluaran"],
                           errorText: vm.typeError,
                           onSelected: (value) {
-                            vm.validateForm();
+                            vm.validateForm(shouldOnlyValidateType: true);
                           },
                         ),
                         const SizedBox(height: 16),

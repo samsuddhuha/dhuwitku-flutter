@@ -27,6 +27,7 @@ class HomeVm extends BaseVm {
   List<DhuwitModel> listHistoryDhuwit = [];
 
   bool isLoadingDashboard = false;
+  bool isLoadingHistory = false;
 
   String speechText = '';
   bool isListening = false;
@@ -178,7 +179,7 @@ class HomeVm extends BaseVm {
 
   Future<void> getDhuwitHistory() async {
     try {
-      isLoadingDashboard = true;
+      isLoadingHistory = true;
       notifyListeners();
 
       final response = await _reportRemoteData.getDhuwitHistory(limit: 10);
@@ -189,10 +190,10 @@ class HomeVm extends BaseVm {
 
       listHistoryDhuwit = list;
 
-      isLoadingDashboard = false;
+      isLoadingHistory = false;
       notifyListeners();
     } catch (e) {
-      isLoadingDashboard = false;
+      isLoadingHistory = false;
 
       if (!context.mounted) return;
       setError(context, e.toString().replaceFirst('Exception: ', ''));
@@ -208,6 +209,9 @@ class HomeVm extends BaseVm {
     String? information,
     String? dateDhuwit,
   ) async {
+    if (isLoadingHistory) {
+      return;
+    }
     final result = await Navigator.push(
       context,
       MaterialPageRoute(

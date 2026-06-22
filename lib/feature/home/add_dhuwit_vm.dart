@@ -80,12 +80,16 @@ class AddDhuwitVm extends BaseVm {
     notifyListeners();
   }
 
-  void validateForm() {
-    final type = typeController.text.trim();
-    if (type.isEmpty) {
-      typeError = "Pilih tipe terlebih dahulu";
-    } else {
-      typeError = null;
+  void validateForm({bool shouldOnlyValidateType = false}) {
+    if (shouldOnlyValidateType) {
+      final type = typeController.text.trim();
+      if (type.isEmpty) {
+        typeError = "Pilih tipe terlebih dahulu";
+      } else {
+        typeError = null;
+      }
+      notifyListeners();
+      return;
     }
 
     final nominal = nominalController.text.trim().toIntFromRupiah();

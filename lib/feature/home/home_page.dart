@@ -2,6 +2,7 @@ import 'dart:ui';
 
 import 'package:dhuwitku/component/bottomsheet/mic_bottom_sheet.dart';
 import 'package:dhuwitku/component/divider/divider_app.dart';
+import 'package:dhuwitku/component/shimmer/shimmer_view.dart';
 import 'package:dhuwitku/core/ui/app_colors.dart';
 import 'package:dhuwitku/core/ui/app_images.dart';
 import 'package:dhuwitku/core/ui/text_app.dart';
@@ -108,9 +109,7 @@ class _HomePageState extends State<HomePage> with RouteAware {
                         ],
                       ),
                     ),
-                    SizedBox(height: 8),
                     _buildDhuwitCard(vm),
-                    SizedBox(height: 8),
                     Expanded(child: _buildHistoryCard(vm)),
                   ],
                 ),
@@ -149,12 +148,15 @@ class _HomePageState extends State<HomePage> with RouteAware {
             child: Row(
               children: [
                 Expanded(
-                  child: TextApp.h4(
-                    vm.getBalanceText(),
-                    color: AppColors.tundora,
-                    fontWeight: FontWeight.w800,
-                  ),
+                  child: vm.isLoadingDashboard
+                      ? shimmerView(height: 24)
+                      : TextApp.h4(
+                          vm.getBalanceText(),
+                          color: AppColors.tundora,
+                          fontWeight: FontWeight.w800,
+                        ),
                 ),
+                SizedBox(width: 8),
                 const Icon(Icons.add, size: 20, color: AppColors.tundora),
               ],
             ),
@@ -177,12 +179,14 @@ class _HomePageState extends State<HomePage> with RouteAware {
               ),
               Expanded(
                 flex: 11,
-                child: TextApp.small(
-                  vm.getDailySpendText(),
-                  textAlign: TextAlign.end,
-                  color: AppColors.tundora,
-                  fontWeight: FontWeight.w800,
-                ),
+                child: vm.isLoadingDashboard
+                    ? shimmerView(height: 16)
+                    : TextApp.small(
+                        vm.getDailySpendText(),
+                        textAlign: TextAlign.end,
+                        color: AppColors.tundora,
+                        fontWeight: FontWeight.w800,
+                      ),
               ),
             ],
           ),
@@ -200,12 +204,14 @@ class _HomePageState extends State<HomePage> with RouteAware {
               ),
               Expanded(
                 flex: 11,
-                child: TextApp.small(
-                  vm.getMonthlySpendText(),
-                  textAlign: TextAlign.end,
-                  color: AppColors.tundora,
-                  fontWeight: FontWeight.w800,
-                ),
+                child: vm.isLoadingDashboard
+                    ? shimmerView(height: 16)
+                    : TextApp.small(
+                        vm.getMonthlySpendText(),
+                        textAlign: TextAlign.end,
+                        color: AppColors.tundora,
+                        fontWeight: FontWeight.w800,
+                      ),
               ),
             ],
           ),
@@ -263,7 +269,7 @@ class _HomePageState extends State<HomePage> with RouteAware {
               ),
               const SizedBox(height: 12),
 
-              if (transactions.isEmpty)
+              if (transactions.isEmpty && !vm.isLoadingHistory)
                 _buildEmptyState()
               else
                 Expanded(
@@ -272,15 +278,18 @@ class _HomePageState extends State<HomePage> with RouteAware {
                       parent: AlwaysScrollableScrollPhysics(),
                     ),
                     padding: EdgeInsets.zero,
-                    itemCount: transactions.length,
+                    itemCount: vm.isLoadingHistory ? 3 : transactions.length,
                     separatorBuilder: (_, __) => const SizedBox(height: 16),
                     itemBuilder: (context, index) {
+                      if (vm.isLoadingHistory) {
+                        return _buildTransactionItemShimmer();
+                      }
+
                       final item = transactions[index];
                       final isIn = item.status == 1;
-                      final date = (item.dateDhuwit ?? '');
+                      final date = item.dateDhuwit ?? '';
 
                       return InkWell(
-                        borderRadius: BorderRadius.circular(16),
                         onTap: () {
                           vm.openUpdatePage(
                             '${item.id}',
@@ -384,6 +393,37 @@ class _HomePageState extends State<HomePage> with RouteAware {
                 fontWeight: FontWeight.w600,
               ),
             ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildTransactionItemShimmer() {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(0, 4, 0, 10),
+      child: Row(
+        children: [
+          ClipOval(child: shimmerView(width: 40, height: 40)),
+
+          const SizedBox(width: 12),
+
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                shimmerView(width: 160, height: 16),
+                const SizedBox(height: 6),
+                shimmerView(width: 110, height: 12),
+              ],
+            ),
+          ),
+
+          const SizedBox(width: 12),
+
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [shimmerView(width: 90, height: 16)],
           ),
         ],
       ),

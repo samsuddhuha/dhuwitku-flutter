@@ -5,6 +5,7 @@ import 'package:dhuwitku/component/field/input_dropdown.dart';
 import 'package:dhuwitku/component/field/input_field.dart';
 import 'package:dhuwitku/component/label/label.dart';
 import 'package:dhuwitku/component/navbar/navbar.dart';
+import 'package:dhuwitku/component/shimmer/shimmer_view.dart';
 import 'package:dhuwitku/core/ui/app_colors.dart';
 import 'package:dhuwitku/core/ui/app_images.dart';
 import 'package:dhuwitku/core/ui/text_app.dart';
@@ -168,8 +169,8 @@ class _ReportPageState extends State<ReportPage> with RouteAware {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                TextApp.small('Ringkasan Bulan Ini'),
-                SizedBox(height: 8),
+                // TextApp.small('Ringkasan Bulan Ini'),
+                // SizedBox(height: 8),
                 Row(
                   children: [
                     Expanded(
@@ -193,12 +194,14 @@ class _ReportPageState extends State<ReportPage> with RouteAware {
                             ],
                           ),
                           SizedBox(height: 4),
-                          TextApp.body(
-                            vm.getMonthlyIncomeText(),
-                            textAlign: TextAlign.end,
-                            color: AppColors.tundora,
-                            fontWeight: FontWeight.w800,
-                          ),
+                          vm.isLoadingCard
+                              ? shimmerView(height: 19)
+                              : TextApp.body(
+                                  vm.getMonthlyIncomeText(),
+                                  textAlign: TextAlign.end,
+                                  color: AppColors.tundora,
+                                  fontWeight: FontWeight.w800,
+                                ),
                         ],
                       ),
                     ),
@@ -224,12 +227,14 @@ class _ReportPageState extends State<ReportPage> with RouteAware {
                             ],
                           ),
                           SizedBox(height: 4),
-                          TextApp.body(
-                            vm.getMonthlySpendText(),
-                            textAlign: TextAlign.end,
-                            color: AppColors.tundora,
-                            fontWeight: FontWeight.w800,
-                          ),
+                          vm.isLoadingCard
+                              ? shimmerView(height: 19)
+                              : TextApp.body(
+                                  vm.getMonthlySpendText(),
+                                  textAlign: TextAlign.end,
+                                  color: AppColors.tundora,
+                                  fontWeight: FontWeight.w800,
+                                ),
                         ],
                       ),
                     ),
@@ -259,21 +264,27 @@ class _ReportPageState extends State<ReportPage> with RouteAware {
       ),
       child: Column(
         children: [
-          if (transactions.isEmpty)
-            _buildEmptyState()
+          if (transactions.isEmpty && !vm.isLoadingHistory)
+            _buildEmptyState(monthYear: vm.monthYearController.text)
           else
             Expanded(
               child: ListView.separated(
+                physics: const BouncingScrollPhysics(
+                  parent: AlwaysScrollableScrollPhysics(),
+                ),
                 padding: EdgeInsets.zero,
-                itemCount: transactions.length,
+                itemCount: vm.isLoadingHistory ? 3 : transactions.length,
                 separatorBuilder: (_, __) => const SizedBox(height: 16),
                 itemBuilder: (context, index) {
+                  if (vm.isLoadingHistory) {
+                    return _buildTransactionItemShimmer();
+                  }
+
                   final item = transactions[index];
                   final isIn = item.status == 1;
-                  final date = (item.dateDhuwit ?? '');
+                  final date = item.dateDhuwit ?? '';
 
                   return InkWell(
-                    borderRadius: BorderRadius.circular(16),
                     onTap: () {
                       vm.openUpdatePage(
                         '${item.id}',
@@ -292,7 +303,8 @@ class _ReportPageState extends State<ReportPage> with RouteAware {
                             : 'EEEE, dd MMM yyyy',
                       ),
                       description: item.information ?? '',
-                      price: "${isIn ? '+' : '-'} ${item.nominal?.toRupiah()}",
+                      price:
+                          "${isIn ? '+' : '-'} ${item.nominal?.toRupiah(withSymbol: false)}",
                     ),
                   );
                 },
@@ -378,7 +390,38 @@ class _ReportPageState extends State<ReportPage> with RouteAware {
     );
   }
 
-  Widget _buildEmptyState() {
+  Widget _buildTransactionItemShimmer() {
+    return Container(
+      padding: const EdgeInsets.fromLTRB(0, 4, 0, 10),
+      child: Row(
+        children: [
+          ClipOval(child: shimmerView(width: 40, height: 40)),
+
+          const SizedBox(width: 12),
+
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                shimmerView(width: 160, height: 16),
+                const SizedBox(height: 6),
+                shimmerView(width: 110, height: 12),
+              ],
+            ),
+          ),
+
+          const SizedBox(width: 12),
+
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [shimmerView(width: 90, height: 16)],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyState({required String monthYear}) {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -387,7 +430,7 @@ class _ReportPageState extends State<ReportPage> with RouteAware {
           Image.asset(AppImages.imgEmpty, width: 140, fit: BoxFit.contain),
           const SizedBox(height: 16),
           TextApp.body(
-            'Belum ada riwayat pencatatan keuangan',
+            'Belum ada riwayat di $monthYear',
             color: AppColors.darkGrey,
           ),
         ],

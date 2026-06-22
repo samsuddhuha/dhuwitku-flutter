@@ -26,7 +26,8 @@ class ReportVm extends BaseVm {
   List<DhuwitModel> allHistoryDhuwit = [];
   List<DhuwitModel> listHistoryDhuwit = [];
 
-  bool isLoadingDashboard = false;
+  bool isLoadingCard = false;
+  bool isLoadingHistory = false;
 
   late int selectedMonth;
   late int selectedYear;
@@ -40,7 +41,7 @@ class ReportVm extends BaseVm {
     selectedYear = now.year;
 
     monthYearController.text = DateFormat(
-      'MMM yyyy',
+      'MMMM yyyy',
       'id_ID',
     ).format(DateTime(selectedYear, selectedMonth));
 
@@ -50,17 +51,17 @@ class ReportVm extends BaseVm {
 
   String getMonthlySpendText() {
     final value = dhuwitSummary?.totalSpend ?? 0;
-    return value.toRupiah();
+    return value.toRupiah(withSymbol: true);
   }
 
   String getMonthlyIncomeText() {
     final value = dhuwitSummary?.totalIncome ?? 0;
-    return value.toRupiah();
+    return value.toRupiah(withSymbol: true);
   }
 
   Future<void> getDhuwitSummary() async {
     try {
-      isLoadingDashboard = true;
+      isLoadingCard = true;
       notifyListeners();
 
       final response = await _remoteData.getDhuwitSummary(
@@ -71,10 +72,10 @@ class ReportVm extends BaseVm {
       final data = response['data'] as Map<String, dynamic>;
       dhuwitSummary = DhuwitSummaryModel.fromJson(data);
 
-      isLoadingDashboard = false;
+      isLoadingCard = false;
       notifyListeners();
     } catch (e) {
-      isLoadingDashboard = false;
+      isLoadingCard = false;
 
       if (!context.mounted) return;
       setError(context, e.toString().replaceFirst('Exception: ', ''));
@@ -85,7 +86,7 @@ class ReportVm extends BaseVm {
 
   Future<void> getDhuwitHistory() async {
     try {
-      isLoadingDashboard = true;
+      isLoadingHistory = true;
       notifyListeners();
 
       final response = await _reportRemoteData.getDhuwitHistory(
@@ -100,10 +101,10 @@ class ReportVm extends BaseVm {
       allHistoryDhuwit = list;
       updateListDhuwit();
 
-      isLoadingDashboard = false;
+      isLoadingHistory = false;
       notifyListeners();
     } catch (e) {
-      isLoadingDashboard = false;
+      isLoadingHistory = false;
 
       if (!context.mounted) return;
       setError(context, e.toString().replaceFirst('Exception: ', ''));
@@ -153,7 +154,10 @@ class ReportVm extends BaseVm {
         selectedMonth = date.month;
         selectedYear = date.year;
 
-        monthYearController.text = DateFormat('MMM yyyy', 'id_ID').format(date);
+        monthYearController.text = DateFormat(
+          'MMMM yyyy',
+          'id_ID',
+        ).format(date);
 
         await Future.wait([getDhuwitSummary(), getDhuwitHistory()]);
       },
