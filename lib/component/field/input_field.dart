@@ -57,6 +57,8 @@ class InputField extends StatefulWidget {
 class _InputFieldState extends State<InputField> {
   late bool _obscure;
 
+  final FocusNode _focusNode = FocusNode();
+
   @override
   void initState() {
     super.initState();
@@ -127,77 +129,77 @@ class _InputFieldState extends State<InputField> {
           const SizedBox(height: 6),
         ],
 
-        GestureDetector(
-          onTap: widget.onTap,
-          child: AbsorbPointer(
-            child: TextField(
-              controller: widget.controller,
-              obscureText: _obscure,
-              keyboardType: widget.keyboardType,
-              onChanged: widget.onChanged,
-              readOnly: widget.readOnly,
-              onTap: widget.onTap,
-              enabled: widget.enabled,
-              minLines: widget.minLines,
-              maxLines: widget.maxLines,
-              maxLength: widget.maxLength, // include maxlength
-              textAlign: widget.textAlign,
-              buildCounter:
-                  (_, {required currentLength, required isFocused, maxLength}) {
-                    return const SizedBox.shrink(); // disable default counter
-                  },
-              style: TextStyle(
-                fontSize: widget.fontSize,
-                color: (widget.enabled || widget.readOnly)
-                    ? AppColors.textPrimary
-                    : AppColors.grey,
-                fontWeight: widget.fontWeight,
-              ),
-              decoration: InputDecoration(
-                hintText: widget.hintText,
-                hintStyle: TextStyle(
-                  fontSize: widget.fontSize,
-                  color: AppColors.grey,
-                  fontWeight: widget.fontWeight,
-                ),
-                contentPadding: EdgeInsets.symmetric(
-                  horizontal: 14,
-                  vertical: widget.maxLines > 1 ? 12 : 14,
-                ),
-                filled: true,
-                fillColor: widget.enabled
-                    ? AppColors.white
-                    : AppColors.surfaceGrey,
+        TextField(
+          focusNode: _focusNode,
+          controller: widget.controller,
+          obscureText: _obscure,
+          keyboardType: widget.keyboardType,
+          onChanged: widget.onChanged,
+          readOnly: widget.readOnly,
+          onTap: () {
+            if (widget.readOnly) {
+              _focusNode.unfocus();
+            }
 
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: borderColor),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: focusedBorderColor, width: 1),
-                ),
-                errorBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: AppColors.error),
-                ),
-                focusedErrorBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: const BorderSide(color: AppColors.error),
-                ),
-                disabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(
-                    color: AppColors.surfaceGrey.withValues(alpha: 0.6),
-                  ),
-                ),
+            widget.onTap?.call();
+          },
+          enabled: widget.enabled,
+          minLines: widget.minLines,
+          maxLines: widget.maxLines,
+          maxLength: widget.maxLength, // include maxlength
+          textAlign: widget.textAlign,
+          buildCounter:
+              (_, {required currentLength, required isFocused, maxLength}) {
+                return const SizedBox.shrink(); // disable default counter
+              },
+          style: TextStyle(
+            fontSize: widget.fontSize,
+            color: (widget.enabled || widget.readOnly)
+                ? AppColors.textPrimary
+                : AppColors.grey,
+            fontWeight: widget.fontWeight,
+          ),
+          decoration: InputDecoration(
+            hintText: widget.hintText,
+            hintStyle: TextStyle(
+              fontSize: widget.fontSize,
+              color: AppColors.grey,
+              fontWeight: widget.fontWeight,
+            ),
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: 14,
+              vertical: widget.maxLines > 1 ? 12 : 14,
+            ),
+            filled: true,
+            fillColor: widget.enabled ? AppColors.white : AppColors.surfaceGrey,
 
-                prefixIcon: prefixIcon,
-                prefixIconConstraints: prefixConstraints,
-                suffixIcon: suffixIcon,
-                suffixIconConstraints: suffixConstraints,
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: borderColor),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(color: focusedBorderColor, width: 1),
+            ),
+            errorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: AppColors.error),
+            ),
+            focusedErrorBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: AppColors.error),
+            ),
+            disabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: BorderSide(
+                color: AppColors.surfaceGrey.withValues(alpha: 0.6),
               ),
             ),
+
+            prefixIcon: prefixIcon,
+            prefixIconConstraints: prefixConstraints,
+            suffixIcon: suffixIcon,
+            suffixIconConstraints: suffixConstraints,
           ),
         ),
 
