@@ -1,224 +1,232 @@
 import 'package:dhuwitku/core/base/base_vm.dart';
+import 'package:dhuwitku/core/service/speech_service.dart';
+import 'package:dhuwitku/core/session/session.dart';
+import 'package:dhuwitku/feature/home/add_dhuwit_page.dart';
+import 'package:dhuwitku/network/remotedata/auth/model/user_model.dart';
+import 'package:dhuwitku/network/remotedata/dhuwit/dhuwit_remote_data.dart';
+import 'package:dhuwitku/network/remotedata/home/home_remote_data.dart';
+import 'package:dhuwitku/network/remotedata/home/model/dashboard_summary_model.dart';
+import 'package:dhuwitku/network/remotedata/report/model/dhuwit_model.dart';
+import 'package:dhuwitku/network/remotedata/report/report_remote_data.dart';
 import 'package:flutter/material.dart';
 
 class HomeVm extends BaseVm {
   final BuildContext context;
 
-  // final UserRemoteData _userRemoteData = UserRemoteData();
-  // final TransactionRemoteData _transactionRemoteData = TransactionRemoteData();
+  final HomeRemoteData _remoteData = HomeRemoteData();
+  final ReportRemoteData _reportRemoteData = ReportRemoteData();
+  final DhuwitRemoteData _dhuwitRemoteData = DhuwitRemoteData();
+
   final ScrollController scrollController = ScrollController();
 
   HomeVm(this.context);
 
-  // UserModel? user;
-  // MerchantModel? merchant;
-  // bool? isAllMerchantSelected;
-  // BalanceModel? balance;
-  // bool? isPinExist;
-  // bool isMerchantNonActive = false;
-  // DateTime startDate = DateTime.now();
-  // DateTime endDate = DateTime.now();
+  UserModel? user;
+  DashboardSummaryModel? dashboard;
+  List<DhuwitModel> listHistoryDhuwit = [];
 
-  // final List<QrisDataModel> transactions = [];
-  // bool isLastPage = false;
-  // bool isLoadingBalance = false;
-  // int page = 1;
-  // bool isHidebalance = true;
-  // int selectedFilter = 0;
-  // DateTime lastGetBalanceAt = DateTime.now();
+  bool isLoadingDashboard = false;
+
+  String speechText = '';
+  bool isListening = false;
 
   Future<void> init() async {
-    // scrollController.addListener(_onScroll);
+    getUser();
+    getDashboardSummary();
+    getDhuwitHistory();
+  }
 
-    // getUser();
-    // getMerchant();
-    // getPinStatus();
-    // updateDateRange(0);
+  Future<void> getUser() async {
+    user = await Session.instance.getUser();
+    notifyListeners();
+  }
 
-    // getBalance();
-    // getListTransaction();
+  String getName() {
+    return user?.name.split(' ').first ?? '';
   }
 
   String getBalanceText() {
-    return 'Rp1.500.000';
+    final total = dashboard?.totalCountDhuwit;
+
+    final balance =
+        (total?.inCount?.total ?? 0) - (total?.outCount?.total ?? 0);
+
+    return formatRupiah(balance);
   }
 
   String getMonthlySpendText() {
-    return 'Rp750.000';
+    final value = dashboard?.totalSpendMonth ?? 0;
+    return formatRupiah(value);
   }
 
   String getDailySpendText() {
-    return 'Rp50.000';
+    final value = dashboard?.totalSpendDay ?? 0;
+    return formatRupiah(value);
   }
 
-  void onTopUpClicked() {
-    // TODO: implement top up
+  Future<void> onTopUpClicked() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => const AddDhuwitPage()),
+    );
+
+    if (result != null && context.mounted) {
+      getDashboardSummary();
+      getDhuwitHistory();
+    }
   }
 
-  // Future<void> getUser() async {
-  //   user = await Session.instance.getUser();
-  //   notifyListeners();
-  // }
+  Future<void> onTapMic() async {
+    if (isListening) {
+      await stopListening();
+      return;
+    }
 
-  // Future<void> getMerchant() async {
-  //   merchant = await Session.instance.getMerchant();
-  //   await getIsAllMerchantSelected();
-  //   checkMerchantStatus();
-  //   notifyListeners();
-  // }
+    final available = await SpeechService.instance.initSpeech();
+    if (!available) return;
 
-  // Future<void> getIsAllMerchantSelected() async {
-  //   isAllMerchantSelected = await Session.instance.isAllMerchantSelected();
-  // }
+    speechText = '';
+    isListening = true;
+    notifyListeners();
 
-  // Future<void> checkMerchantStatus() async {
-  //   final isAllSelected =
-  //       await Session.instance.isAllMerchantSelected() ?? false;
+    await SpeechService.instance.startListening(
+      onResult: (text) {
+        speechText = text;
+        notifyListeners();
+      },
+    );
+  }
 
-  //   if (isAllSelected) {
-  //     isMerchantNonActive = false;
-  //   } else {
-  //     isMerchantNonActive =
-  //         merchant?.nmid == null ||
-  //         merchant!.nmid!.isEmpty ||
-  //         merchant?.raw == null ||
-  //         merchant!.raw!.isEmpty;
-  //   }
+  Future<void> stopListening() async {
+    await SpeechService.instance.stopListening();
+    isListening = false;
+    notifyListeners();
+  }
 
-  //   notifyListeners();
-  // }
+  Future<void> parserDataFromText() async {
+    try {
+      showLoading(context, true);
 
-  // String merchantName() {
-  //   if (isAllMerchantSelected != true) {
-  //     return merchant?.name ?? '-';
-  //   } else {
-  //     return 'Semua Merchant';
-  //   }
-  // }
+      final response = await _dhuwitRemoteData.createFromText(
+        speechText: speechText,
+      );
 
-  // Future<void> getBalance() async {
-  //   try {
-  //     isLoadingBalance = true;
-  //     final response = await _userRemoteData.getBalance(
-  //       startDate: startDate.toStringDate(format: 'yyyy-MM-dd'),
-  //       endDate: endDate.toStringDate(format: 'yyyy-MM-dd'),
-  //     );
-  //     final data = response['data'] as Map<String, dynamic>;
-  //     balance = BalanceModel.fromJson(data);
-  //     lastGetBalanceAt = DateTime.now();
-  //     isLoadingBalance = false;
-  //     notifyListeners();
-  //   } catch (e) {
-  //     if (!context.mounted) return;
-  //     isLoadingBalance = false;
-  //     setError(context, e.toString().replaceFirst('Exception: ', ''));
-  //   }
-  // }
+      final data = response['data'] as Map<String, dynamic>? ?? {};
 
-  // Future<void> getPinStatus() async {
-  //   if (isPinExist == true) {
-  //     return;
-  //   }
-  //   try {
-  //     final response = await _userRemoteData.getPinStatus();
-  //     final data = response['data'] as Map<String, dynamic>;
-  //     isPinExist = data['status'] as bool?;
-  //     notifyListeners();
-  //   } catch (e) {
-  //     if (!context.mounted) return;
-  //     setError(context, e.toString().replaceFirst('Exception: ', ''));
-  //   }
-  // }
+      final status = data['status'] as int?;
+      final nominal = data['nominal'] as int?;
+      final information = data['information'] as String?;
+      final dateDhuwit = data['date_dhuwit'] as String?;
 
-  // Future<void> pullRefresh() async {
-  //   page = 1;
-  //   getListTransaction();
-  // }
+      if (!context.mounted) return;
+      showLoading(context, false);
 
-  // Future<void> getListTransaction() async {
-  //   try {
-  //     showLoading(context, true);
-  //     final merchantId = await Session.instance.isAllMerchantSelected() == true
-  //         ? ''
-  //         : merchant?.id.toString() ?? '';
+      final result = await Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => AddDhuwitPage(
+            status: status,
+            nominal: nominal,
+            information: information,
+            dateDhuwit: dateDhuwit,
+          ),
+        ),
+      );
 
-  //     final response = await _transactionRemoteData.historyCashIn(
-  //       page: page,
-  //       startDate: startDate.toStringDate(format: 'yyyy-MM-dd'),
-  //       endDate: endDate.toStringDate(format: 'yyyy-MM-dd'),
-  //       userQrisId: merchantId.isEmpty ? null : merchantId,
-  //     );
+      if (result != null && context.mounted) {
+        getDashboardSummary();
+        getDhuwitHistory();
+      }
 
-  //     isLastPage = !(response['has_next_page'] ?? false);
+      notifyListeners();
+    } catch (e) {
+      if (!context.mounted) return;
+      showLoading(context, false);
+      setError(context, e.toString().replaceFirst('Exception: ', ''));
+    }
+  }
 
-  //     final List<QrisDataModel> list = (response['histories'] as List)
-  //         .map((e) => QrisDataModel.fromJson(e))
-  //         .toList();
+  Future<void> getDashboardSummary() async {
+    try {
+      isLoadingDashboard = true;
+      notifyListeners();
 
-  //     if (page == 1) {
-  //       transactions.clear();
-  //       transactions.addAll(list);
-  //     } else {
-  //       transactions.addAll(list);
-  //     }
+      final response = await _remoteData.getDashboardSummary();
+      final data = response['data'] as Map<String, dynamic>;
+      dashboard = DashboardSummaryModel.fromJson(data);
 
-  //     if (!context.mounted) return;
-  //     showLoading(context, false);
-  //   } catch (e) {
-  //     if (!context.mounted) return;
-  //     showLoading(context, false);
-  //     setError(context, e.toString().replaceFirst('Exception: ', ''));
-  //   }
-  // }
+      isLoadingDashboard = false;
+      notifyListeners();
+    } catch (e) {
+      isLoadingDashboard = false;
 
-  // (DateTime startDate, DateTime endDate) initDefaultDateRange(int countDay) {
-  //   final now = DateTime.now();
+      if (!context.mounted) return;
+      setError(context, e.toString().replaceFirst('Exception: ', ''));
 
-  //   final endDate = DateTime(now.year, now.month, now.day, 12, 0, 0, 0);
+      notifyListeners();
+    }
+  }
 
-  //   final startDate = endDate.subtract(Duration(days: countDay));
+  String formatRupiah(int value) {
+    final isNegative = value < 0;
+    final formatted = value.abs().toString().replaceAllMapped(
+      RegExp(r'\B(?=(\d{3})+(?!\d))'),
+      (match) => '.',
+    );
 
-  //   return (startDate, endDate);
-  // }
+    return '${isNegative ? '- ' : ''}Rp$formatted';
+  }
 
-  // void updateDateRange(int rangeCountDay) {
-  //   final (start, end) = initDefaultDateRange(rangeCountDay);
+  Future<void> getDhuwitHistory() async {
+    try {
+      isLoadingDashboard = true;
+      notifyListeners();
 
-  //   startDate = start;
-  //   endDate = end;
+      final response = await _reportRemoteData.getDhuwitHistory(limit: 10);
 
-  //   notifyListeners();
-  // }
+      final List<DhuwitModel> list = (response['data'] as List)
+          .map((e) => DhuwitModel.fromJson(e))
+          .toList();
 
-  // void _onScroll() {
-  //   if (!scrollController.hasClients) return;
+      listHistoryDhuwit = list.reversed.toList();
 
-  //   final threshold = 100.0;
-  //   final maxScroll = scrollController.position.maxScrollExtent;
-  //   final currentScroll = scrollController.position.pixels;
+      isLoadingDashboard = false;
+      notifyListeners();
+    } catch (e) {
+      isLoadingDashboard = false;
 
-  //   if (maxScroll - currentScroll <= threshold) {
-  //     if (!isLoading && !isLastPage) {
-  //       page++;
-  //       getListTransaction();
-  //     }
-  //   }
-  // }
+      if (!context.mounted) return;
+      setError(context, e.toString().replaceFirst('Exception: ', ''));
 
-  // void updateSelectedFilter(int filter) {
-  //   selectedFilter = filter;
-  //   page = 1;
-  //   updateDateRange(filter);
+      notifyListeners();
+    }
+  }
 
-  //   getBalance();
-  //   getListTransaction();
-  //   notifyListeners();
-  // }
+  Future<void> openUpdatePage(
+    String id,
+    int? status,
+    int? nominal,
+    String? information,
+    String? dateDhuwit,
+  ) async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AddDhuwitPage(
+          idDhuwit: id,
+          status: status,
+          nominal: nominal,
+          information: information,
+          dateDhuwit: dateDhuwit,
+        ),
+      ),
+    );
 
-  // void updateIsHideBalance() {
-  //   isHidebalance = !isHidebalance;
-  //   notifyListeners();
-  // }
+    if (result != null && context.mounted) {
+      getDashboardSummary();
+      getDhuwitHistory();
+    }
+  }
 
   @override
   void dispose() {

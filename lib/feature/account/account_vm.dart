@@ -2,6 +2,7 @@ import 'package:dhuwitku/component/bottomsheet/confirm_bottom_sheet.dart';
 import 'package:dhuwitku/core/base/base_vm.dart';
 import 'package:dhuwitku/core/session/session.dart';
 import 'package:dhuwitku/feature/login/login_page.dart';
+import 'package:dhuwitku/network/remotedata/auth/model/user_model.dart';
 import 'package:flutter/material.dart';
 
 class AccountVm extends BaseVm {
@@ -9,7 +10,7 @@ class AccountVm extends BaseVm {
 
   // final UserRemoteData _userRemoteData = UserRemoteData();
 
-  // UserModel? user;
+  UserModel? user;
   // MerchantModel? merchant;
   // bool? isAllMerchantSelected;
   // List<MerchantModel>? merchants;
@@ -17,14 +18,14 @@ class AccountVm extends BaseVm {
 
   AccountVm(this.context) {
     // getPinStatus();
-    // getUser();
+    getUser();
     // getMerchant();
   }
 
-  // Future<void> getUser() async {
-  //   user = await Session.instance.getUser();
-  //   notifyListeners();
-  // }
+  Future<void> getUser() async {
+    user = await Session.instance.getUser();
+    notifyListeners();
+  }
 
   // Future<void> getMerchant() async {
   //   merchant = await Session.instance.getMerchant();
@@ -112,7 +113,6 @@ class AccountVm extends BaseVm {
       message: 'Anda akan keluar dari akun ini. Yakin ingin melanjutkan?',
       negativeText: 'Batal',
       positiveText: 'Keluar',
-      marginBottom: 40,
       onPositive: () async {
         await Session.instance.clearSession();
         if (!context.mounted) return;

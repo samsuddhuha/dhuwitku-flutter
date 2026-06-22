@@ -1,6 +1,6 @@
 import 'package:dhuwitku/core/base/base_vm.dart';
 import 'package:dhuwitku/network/remotedata/auth/auth_remote_data.dart';
-import 'package:dhuwitku/util/helper/snackbar.dart';
+import 'package:dhuwitku/util/helper/snackbar_helper.dart';
 import 'package:flutter/material.dart';
 
 class RegisterVm extends BaseVm {

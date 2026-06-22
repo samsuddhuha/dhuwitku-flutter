@@ -1,11 +1,15 @@
 import 'dart:ui';
 
+import 'package:dhuwitku/component/bottomsheet/mic_bottom_sheet.dart';
 import 'package:dhuwitku/component/divider/divider_app.dart';
 import 'package:dhuwitku/core/ui/app_colors.dart';
 import 'package:dhuwitku/core/ui/app_images.dart';
 import 'package:dhuwitku/core/ui/text_app.dart';
 import 'package:dhuwitku/feature/account/account_page.dart';
 import 'package:dhuwitku/feature/home/home_vm.dart';
+import 'package:dhuwitku/util/extension/date_extension.dart';
+import 'package:dhuwitku/util/extension/int_extension.dart';
+import 'package:dhuwitku/util/extension/string_extension.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -54,7 +58,12 @@ class _HomePageState extends State<HomePage> with RouteAware {
           return PopScope(
             canPop: true,
             child: Scaffold(
-              backgroundColor: AppColors.surfaceGrey,
+              backgroundColor: AppColors.white,
+              floatingActionButton: FloatingActionButton(
+                onPressed: () => _showMicBottomSheet(vm),
+                backgroundColor: AppColors.primaryDark,
+                child: const Icon(Icons.mic, color: AppColors.white),
+              ),
               body: SafeArea(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,7 +78,7 @@ class _HomePageState extends State<HomePage> with RouteAware {
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
                           TextApp.h4(
-                            'Hai, Sam 👋',
+                            'Hai, ${vm.getName()} 👋',
                             fontWeight: FontWeight.bold,
                             color: AppColors.tundora,
                           ),
@@ -85,20 +94,21 @@ class _HomePageState extends State<HomePage> with RouteAware {
                             },
                             child: Padding(
                               padding: const EdgeInsets.only(left: 16),
-                              child: Icon(
-                                Icons.person,
-                                size: 28,
-                                color: AppColors.tundora,
+                              child: Image.asset(
+                                AppImages.icCircleUser,
+                                width: 28,
+                                height: 28,
+                                fit: BoxFit.contain,
                               ),
                             ),
                           ),
                         ],
                       ),
                     ),
-                    SizedBox(height: 16),
+                    SizedBox(height: 8),
                     _buildDhuwitCard(vm),
-                    SizedBox(height: 48),
-                    _buildHistoryCard(vm),
+                    SizedBox(height: 8),
+                    Expanded(child: _buildHistoryCard(vm)),
                   ],
                 ),
               ),
@@ -109,6 +119,12 @@ class _HomePageState extends State<HomePage> with RouteAware {
     );
   }
 
+  void _showMicBottomSheet(HomeVm vm) {
+    vm.speechText = '';
+    vm.onTapMic();
+    showMicBottomSheet(context: context, vm: vm);
+  }
+
   Widget _buildDhuwitCard(HomeVm vm) {
     return Container(
       margin: const EdgeInsets.only(top: 16, left: 16, right: 16),
@@ -116,6 +132,7 @@ class _HomePageState extends State<HomePage> with RouteAware {
       decoration: BoxDecoration(
         color: AppColors.white,
         borderRadius: BorderRadius.circular(8),
+        border: Border.all(color: AppColors.lightGrey, width: 1),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -151,14 +168,14 @@ class _HomePageState extends State<HomePage> with RouteAware {
               Expanded(
                 flex: 9,
                 child: TextApp.small(
-                  'Pengeluaran Bulan Ini',
-                  color: AppColors.primary,
+                  'Pengeluaran Hari Ini',
+                  color: AppColors.primaryDark,
                 ),
               ),
               Expanded(
                 flex: 11,
                 child: TextApp.small(
-                  vm.getMonthlySpendText(),
+                  vm.getDailySpendText(),
                   textAlign: TextAlign.end,
                   color: AppColors.tundora,
                   fontWeight: FontWeight.w800,
@@ -174,14 +191,14 @@ class _HomePageState extends State<HomePage> with RouteAware {
               Expanded(
                 flex: 9,
                 child: TextApp.small(
-                  'Pengeluaran Hari Ini',
-                  color: AppColors.primary,
+                  'Pengeluaran Bulan Ini',
+                  color: AppColors.primaryDark,
                 ),
               ),
               Expanded(
                 flex: 11,
                 child: TextApp.small(
-                  vm.getDailySpendText(),
+                  vm.getMonthlySpendText(),
                   textAlign: TextAlign.end,
                   color: AppColors.tundora,
                   fontWeight: FontWeight.w800,
@@ -195,30 +212,10 @@ class _HomePageState extends State<HomePage> with RouteAware {
   }
 
   Widget _buildHistoryCard(HomeVm vm) {
-    final dummyTransactions = [
-      {
-        "icon": AppImages.icPayment,
-        "date": "Hari ini, 09:50",
-        "description": "Bopet Mini",
-        "price": "- Rp 119.000",
-      },
-      {
-        "icon": AppImages.icTransfer,
-        "date": "Hari ini, 08:12",
-        "description": "Top Up Saldo",
-        "price": "+ Rp 500.000",
-      },
-      {
-        "icon": AppImages.icTransfer,
-        "date": "Kemarin, 21:14",
-        "description": "Transfer ke Andi",
-        "price": "- Rp 75.000",
-      },
-    ];
+    final transactions = vm.listHistoryDhuwit;
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(32),
-
       child: BackdropFilter(
         filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
         child: Container(
@@ -232,32 +229,72 @@ class _HomePageState extends State<HomePage> with RouteAware {
               width: 1,
             ),
           ),
-
           child: Column(
             children: [
-              ListView.separated(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                itemCount: dummyTransactions.length,
-                separatorBuilder: (_, __) => Divider(
-                  color: Colors.black.withValues(alpha: 0),
-                  height: 24,
-                ),
-                itemBuilder: (context, index) {
-                  final item = dummyTransactions[index];
-                  return InkWell(
-                    borderRadius: BorderRadius.circular(16),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TextApp.body(
+                    'Riwayat',
+                    fontWeight: FontWeight.bold,
+                    color: AppColors.tundora,
+                  ),
+                  GestureDetector(
                     onTap: () {},
-                    child: _buildTransactionItem(
-                      iconPath: item["icon"] as String,
-                      iconColor: AppColors.secondary,
-                      date: item["date"] as String,
-                      description: item["description"] as String,
-                      price: item["price"] as String,
+                    child: Padding(
+                      padding: const EdgeInsets.only(left: 16),
+                      child: TextApp.small(
+                        'Lihat Semua',
+                        color: AppColors.tundora,
+                      ),
                     ),
-                  );
-                },
+                  ),
+                ],
               ),
+              const SizedBox(height: 12),
+
+              if (transactions.isEmpty)
+                _buildEmptyState()
+              else
+                Expanded(
+                  child: ListView.separated(
+                    padding: EdgeInsets.zero,
+                    itemCount: transactions.length,
+                    separatorBuilder: (_, __) => const SizedBox(height: 16),
+                    itemBuilder: (context, index) {
+                      final item = transactions[index];
+                      final isIn = item.status == 1;
+                      final date = (item.dateDhuwit ?? '');
+
+                      return InkWell(
+                        borderRadius: BorderRadius.circular(16),
+                        onTap: () {
+                          vm.openUpdatePage(
+                            '${item.id}',
+                            item.status,
+                            item.nominal,
+                            item.information,
+                            item.dateDhuwit,
+                          );
+                        },
+                        child: _buildTransactionItem(
+                          iconPath: isIn ? AppImages.icIn : AppImages.icOut,
+                          iconColor: isIn
+                              ? AppColors.green
+                              : AppColors.crimsonRed,
+                          date: date.toDate().toStringDate(
+                            format: date.contains(':')
+                                ? 'EEEE, dd MMM yyyy HH:mm'
+                                : 'EEEE, dd MMM yyyy',
+                          ),
+                          description: item.information ?? '',
+                          price:
+                              "${isIn ? '+' : '-'} ${item.nominal?.toRupiah(withSymbol: true)}",
+                        ),
+                      );
+                    },
+                  ),
+                ),
             ],
           ),
         ),
@@ -309,15 +346,15 @@ class _HomePageState extends State<HomePage> with RouteAware {
               children: [
                 TextApp.h5(
                   description,
-                  color: AppColors.white,
+                  color: AppColors.tundora,
                   fontWeight: FontWeight.w500,
                 ),
                 const SizedBox(height: 4),
-                TextApp.small(
+                TextApp.xSmall(
                   date,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  color: AppColors.grey,
+                  color: AppColors.darkGrey.withValues(alpha: 0.80),
                 ),
               ],
             ),
@@ -328,9 +365,9 @@ class _HomePageState extends State<HomePage> with RouteAware {
           Column(
             crossAxisAlignment: CrossAxisAlignment.end,
             children: [
-              TextApp.small(
+              TextApp.body(
                 price,
-                color: AppColors.white,
+                color: AppColors.tundora,
                 fontWeight: FontWeight.w600,
               ),
             ],
@@ -340,25 +377,20 @@ class _HomePageState extends State<HomePage> with RouteAware {
     );
   }
 
-  // Widget _buildEmptyState() {
-  //   return Center(
-  //     child: Column(
-  //       mainAxisAlignment: MainAxisAlignment.center,
-  //       children: [
-  //         TextApp.small(
-  //           'Belum ada transaksi',
-  //           fontWeight: FontWeight.w600,
-  //           color: AppColors.textPrimary,
-  //         ),
-  //         const SizedBox(height: 8),
-  //         TextApp.xSmall(
-  //           'Transaksi masuk akan muncul di sini',
-  //           color: AppColors.textSecondary,
-  //           textAlign: TextAlign.center,
-  //         ),
-  //         const SizedBox(height: 24),
-  //       ],
-  //     ),
-  //   );
-  // }
+  Widget _buildEmptyState() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const SizedBox(height: 32),
+          Image.asset(AppImages.imgEmpty, width: 140, fit: BoxFit.contain),
+          const SizedBox(height: 16),
+          TextApp.body(
+            'Belum ada riwayat pencatatan keuangan',
+            color: AppColors.darkGrey,
+          ),
+        ],
+      ),
+    );
+  }
 }

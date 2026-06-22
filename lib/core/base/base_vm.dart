@@ -1,6 +1,6 @@
 import 'package:dhuwitku/component/bottomsheet/confirm_bottom_sheet.dart';
 import 'package:dhuwitku/component/modal/loading_modal.dart';
-import 'package:dhuwitku/util/helper/snackbar.dart';
+import 'package:dhuwitku/util/helper/snackbar_helper.dart';
 import 'package:flutter/material.dart';
 
 class BaseVm extends ChangeNotifier {
@@ -60,7 +60,6 @@ class BaseVm extends ChangeNotifier {
         SnackbarHelper.show(
           context,
           message,
-          duration: const Duration(seconds: 10),
         );
       }
     }

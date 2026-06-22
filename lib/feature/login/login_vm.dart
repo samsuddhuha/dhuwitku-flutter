@@ -1,5 +1,6 @@
 import 'package:dhuwitku/core/base/base_vm.dart';
 import 'package:dhuwitku/core/session/session.dart';
+import 'package:dhuwitku/feature/home/home_page.dart';
 import 'package:dhuwitku/feature/main/main_tab_page.dart';
 import 'package:dhuwitku/network/remotedata/auth/auth_remote_data.dart';
 import 'package:flutter/material.dart';
@@ -83,8 +84,12 @@ class LoginVm extends BaseVm {
       showLoading(context, false);
       Navigator.pushReplacement(
         context,
-        MaterialPageRoute(builder: (_) => const MainTabPage()),
+        MaterialPageRoute(builder: (_) => const HomePage()),
       );
+      // Navigator.pushReplacement(
+      //   context,
+      //   MaterialPageRoute(builder: (_) => const MainTabPage()),
+      // );
     } catch (e) {
       if (!context.mounted) return;
       showLoading(context, false);

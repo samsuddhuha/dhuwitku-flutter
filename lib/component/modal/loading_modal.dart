@@ -1,3 +1,4 @@
+import 'package:dhuwitku/core/ui/app_colors.dart';
 import 'package:flutter/material.dart';
 
 class LoadingModal {
@@ -10,20 +11,17 @@ class LoadingModal {
       builder: (_) => Stack(
         children: [
           ModalBarrier(
-            color: Colors.black45,
+            color: Colors.white.withValues(alpha: 0.5),
             dismissible: false,
           ),
           Center(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                const CircularProgressIndicator(color: Colors.white),
+                const CircularProgressIndicator(color: AppColors.tundora),
                 if (message != null) ...[
                   const SizedBox(height: 16),
-                  Text(
-                    message,
-                    style: const TextStyle(color: Colors.white),
-                  ),
+                  Text(message, style: const TextStyle(color: Colors.white)),
                 ],
               ],
             ),

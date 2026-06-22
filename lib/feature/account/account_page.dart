@@ -1,5 +1,6 @@
 import 'dart:ui';
 
+import 'package:dhuwitku/component/divider/divider_app.dart';
 import 'package:dhuwitku/component/navbar/navbar.dart';
 import 'package:dhuwitku/core/ui/app_colors.dart';
 import 'package:dhuwitku/core/ui/app_images.dart';
@@ -31,20 +32,52 @@ class AccountPage extends StatelessWidget {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          _buildProfileInfoItem(),
+                          _buildProfileInfoItem(vm),
 
                           SizedBox(height: 20),
-                          _buildMenuCard(),
 
-                          SizedBox(height: 20),
-                          GestureDetector(
-                            onTap: () {
-                              vm.logout();
-                            },
-                            child: TextApp.h4(
-                              "Keluar akun",
-                              color: AppColors.primary,
-                              fontWeight: FontWeight.w500,
+                          Container(
+                            width: double.infinity,
+                            margin: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: AppColors.lightGrey,
+                                width: 1,
+                              ),
+                            ),
+                            child: Column(
+                              children: [
+                                _buildProfileMenuItem(
+                                  title: "Keamanan & Privasi",
+                                  iconPath: AppImages.icCircleSecurity,
+                                  onTap: () {},
+                                ),
+                                SizedBox(height: 12),
+
+                                _buildProfileMenuItem(
+                                  title: "Syarat dan Ketentuan",
+                                  iconPath: AppImages.icCircleReport,
+                                  onTap: () {
+                                    // vm.openWebTermCondition();
+                                  },
+                                ),
+
+                                SizedBox(height: 16),
+                                DividerApp(lineColor: AppColors.lightGrey),
+                                SizedBox(height: 16),
+
+                                _buildLogoutItem(
+                                  onTap: () {
+                                    vm.logout();
+                                  },
+                                ),
+                              ],
                             ),
                           ),
                         ],
@@ -60,68 +93,19 @@ class AccountPage extends StatelessWidget {
     );
   }
 
-  Widget _buildProfileInfoItem() {
+  Widget _buildProfileInfoItem(AccountVm vm) {
     return Column(
       children: [
-        Image.asset(AppImages.icUserBlue, fit: BoxFit.contain, width: 80),
+        Image.asset(AppImages.icCircleUser, fit: BoxFit.contain, width: 80),
         SizedBox(height: 12),
         TextApp.h1(
-          "Inacash Ina",
+          vm.user?.name ?? "Nama Pengguna",
           fontWeight: FontWeight.bold,
           color: AppColors.tundora,
         ),
         SizedBox(height: 4),
-        TextApp.h4("0812345678910"),
+        TextApp.h4(vm.user?.email ?? ''),
       ],
-    );
-  }
-
-  Widget _buildMenuCard() {
-    return ClipRRect(
-      borderRadius: BorderRadius.circular(32),
-      child: BackdropFilter(
-        filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
-        child: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(32),
-            color: Colors.white.withValues(alpha: 0.10),
-            border: Border.all(
-              color: Colors.white.withValues(alpha: 0.20),
-              width: 1,
-            ),
-          ),
-
-          child: Column(
-            children: [
-              _buildProfileMenuItem(
-                title: "Bantuan",
-                iconPath: AppImages.icCircleHelp,
-                onTap: () async {},
-              ),
-              SizedBox(height: 16),
-              _buildProfileMenuItem(
-                title: "Akun",
-                iconPath: AppImages.icCircleUser,
-                onTap: () async {},
-              ),
-              SizedBox(height: 16),
-              _buildProfileMenuItem(
-                title: "Privasi & keamanan",
-                iconPath: AppImages.icCircleSecurity,
-                onTap: () async {},
-              ),
-              SizedBox(height: 16),
-              _buildProfileMenuItem(
-                title: "Pemberitahuan",
-                iconPath: AppImages.icCircleNotification,
-                onTap: () async {},
-              ),
-            ],
-          ),
-        ),
-      ),
     );
   }
 
@@ -133,20 +117,52 @@ class AccountPage extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8),
+        padding: const EdgeInsets.fromLTRB(8, 12, 8, 12),
+        decoration: BoxDecoration(
+          color: AppColors.surfaceGrey,
+          borderRadius: BorderRadius.circular(16),
+        ),
         child: Row(
           children: [
-            Image.asset(
-              iconPath,
-              width: 26,
-              height: 26,
-              fit: BoxFit.contain,
-              color: AppColors.white,
+            Image.asset(iconPath, width: 40, height: 40, fit: BoxFit.contain),
+
+            const SizedBox(width: 12),
+
+            // 🔹 Title
+            Expanded(child: TextApp.body(title)),
+
+            // 🔹 Chevron (right arrow)
+            const Icon(Icons.chevron_right, color: AppColors.tundora, size: 20),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildLogoutItem({VoidCallback? onTap}) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.fromLTRB(8, 12, 8, 12),
+        decoration: BoxDecoration(
+          color: AppColors.surfaceGrey,
+          borderRadius: BorderRadius.circular(16),
+        ),
+        child: Row(
+          children: [
+            // Icon circle
+            Container(
+              width: 40,
+              height: 40,
+              decoration: const BoxDecoration(
+                shape: BoxShape.circle,
+                color: AppColors.white,
+              ),
+              padding: const EdgeInsets.all(8),
+              child: Image.asset(AppImages.icLogout, width: 24, height: 24),
             ),
-
-            const SizedBox(width: 16),
-
-            Expanded(child: TextApp.h5(title, fontWeight: FontWeight.w500)),
+            const SizedBox(width: 12),
+            const Expanded(child: TextApp.body("Keluar")),
           ],
         ),
       ),

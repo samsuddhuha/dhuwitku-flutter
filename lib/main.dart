@@ -2,8 +2,11 @@ import 'package:dhuwitku/feature/splashscreen/splashscreen_page.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:intl/date_symbol_data_local.dart';
 
-void main() {
+Future<void> main() async {
+  await initializeDateFormatting('id_ID', null);
+  
   runApp(const MyApp());
 }
 
@@ -19,7 +22,6 @@ class MyApp extends StatelessWidget {
         if (!kIsWeb) {
           return child!;
         }
-
         return LayoutBuilder(
           builder: (context, constraints) {
             if (constraints.maxWidth < 600) {
@@ -30,7 +32,7 @@ class MyApp extends StatelessWidget {
               color: Colors.white,
               child: Center(
                 child: SizedBox(
-                  width: 560,
+                  width: 570,
                   child: Material(color: Colors.white, child: child!),
                 ),
               ),
@@ -44,6 +46,10 @@ class MyApp extends StatelessWidget {
           builders: {
             TargetPlatform.android: CupertinoPageTransitionsBuilder(),
             TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+
+            TargetPlatform.macOS: NoAnimationPageTransitionsBuilder(),
+            TargetPlatform.windows: NoAnimationPageTransitionsBuilder(),
+            TargetPlatform.linux: NoAnimationPageTransitionsBuilder(),
           },
         ),
         fontFamily: 'HostGrotesk',
@@ -55,6 +61,21 @@ class MyApp extends StatelessWidget {
       ),
       home: const SplashScreenPage(),
     );
+  }
+}
+
+class NoAnimationPageTransitionsBuilder extends PageTransitionsBuilder {
+  const NoAnimationPageTransitionsBuilder();
+
+  @override
+  Widget buildTransitions<T>(
+    PageRoute<T> route,
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    return child;
   }
 }
 

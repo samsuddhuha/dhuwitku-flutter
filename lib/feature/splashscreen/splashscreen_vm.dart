@@ -1,5 +1,6 @@
 import 'package:dhuwitku/core/base/base_vm.dart';
 import 'package:dhuwitku/core/session/session.dart';
+import 'package:dhuwitku/feature/home/home_page.dart';
 import 'package:dhuwitku/feature/login/login_page.dart';
 import 'package:dhuwitku/feature/main/main_tab_page.dart';
 import 'package:dhuwitku/network/config/app_client.dart';
@@ -40,9 +41,13 @@ class SplashScreenVm extends BaseVm {
   }
 
   void goToHome() {
+    // Navigator.pushReplacement(
+    //   context,
+    //   MaterialPageRoute(builder: (_) => const MainTabPage()),
+    // );
     Navigator.pushReplacement(
       context,
-      MaterialPageRoute(builder: (_) => const MainTabPage()),
+      MaterialPageRoute(builder: (_) => const HomePage()),
     );
   }
 }

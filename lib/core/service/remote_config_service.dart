@@ -9,10 +9,7 @@ class RemoteConfigService {
   final FirebaseRemoteConfig _remoteConfig = FirebaseRemoteConfig.instance;
 
   Future<void> init() async {
-    await _remoteConfig.setDefaults({
-      'welcome_message': 'Hello user!',
-      'enable_pinning': true,
-    });
+    await _remoteConfig.setDefaults({'welcome_message': 'Hello user!'});
 
     await _remoteConfig.setConfigSettings(
       RemoteConfigSettings(
@@ -39,9 +36,6 @@ class RemoteConfigService {
 
   // feature flags
   String get welcomeMessage => _remoteConfig.getString('welcome_message');
-
-  // 🔐 SECURITY FLAG
-  bool get enablePinning => _remoteConfig.getBool('enable_pinning');
 
   // 🔄 manual emergency refresh
   Future<void> forceRefresh() async {

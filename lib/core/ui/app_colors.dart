@@ -5,10 +5,10 @@ class AppColors {
   static const tundora = Color(0xDD000000);
 
   // Brand
-  static const primary = Color(0xFFE31E36);
-  static const primaryDark = Color(0xFFC40026);
-  static const primaryDarker = Color(0xFF570909);
-  static const secondary = Color(0xFF000000);
+  static const primary = Color(0xFF50A75F);
+  static const primaryDark = Color(0xFF3D864A);
+  static const primaryLight = Color(0xFF7BC887);
+  static const secondary = Color(0xFF2F6B3C);
 
   static const crimsonRed = Color(0xFFE30031);
   static const lightRed = Color(0xFFFFE5E5);

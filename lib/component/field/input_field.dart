@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:dhuwitku/core/ui/app_colors.dart';
 import 'package:dhuwitku/core/ui/text_app.dart';
 import 'package:flutter/material.dart';
@@ -76,6 +74,7 @@ class _InputFieldState extends State<InputField> {
         widget.errorText != null && widget.errorText!.isNotEmpty;
 
     Color borderColor = hasError ? AppColors.error : AppColors.silver;
+    Color focusedBorderColor = hasError ? AppColors.error : AppColors.secondary;
 
     Widget? prefixIcon;
     BoxConstraints? prefixConstraints;
@@ -171,10 +170,7 @@ class _InputFieldState extends State<InputField> {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
-              borderSide: const BorderSide(
-                color: AppColors.secondary,
-                width: 1,
-              ),
+              borderSide: BorderSide(color: focusedBorderColor, width: 1),
             ),
             errorBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12),
