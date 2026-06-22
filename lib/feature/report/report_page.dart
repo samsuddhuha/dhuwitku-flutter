@@ -85,6 +85,7 @@ class _ReportPageState extends State<ReportPage> with RouteAware {
                         title: "Bulan & Tahun",
                         hintText: "Pilih bulan dan tahun",
                         controller: vm.monthYearController,
+                        readOnly: true,
                         onTap: () {
                           vm.openSelectDate();
                         },

@@ -1,12 +1,8 @@
-import 'package:dhuwitku/component/bottomsheet/confirm_bottom_sheet.dart';
-import 'package:dhuwitku/component/button/google_button.dart';
 import 'package:dhuwitku/component/button/primary_button.dart';
 import 'package:dhuwitku/component/button/secondary_button.dart';
 import 'package:dhuwitku/component/divider/divider_app.dart';
 import 'package:dhuwitku/component/field/input_field.dart';
-import 'package:dhuwitku/component/navbar/navbar.dart';
 import 'package:dhuwitku/core/ui/app_colors.dart';
-import 'package:dhuwitku/core/ui/app_images.dart';
 import 'package:dhuwitku/core/ui/text_app.dart';
 import 'package:dhuwitku/feature/login/login_vm.dart';
 import 'package:dhuwitku/feature/register/register_page.dart';
@@ -73,7 +69,7 @@ class LoginPage extends StatelessWidget {
                         SizedBox(height: 32),
                         PrimaryButton(
                           text: "Masuk",
-                          isEnabled: true,
+                          isEnabled: vm.isFormValid(),
                           onPressed: () {
                             vm.login();
                           },
