@@ -140,8 +140,6 @@ class _InputFieldState extends State<InputField> {
             if (widget.readOnly) {
               _focusNode.unfocus();
             }
-
-            FocusManager.instance.primaryFocus?.unfocus();
             widget.onTap?.call();
           },
           enabled: widget.enabled,

@@ -77,9 +77,9 @@ class AddDhuwitPage extends StatelessWidget {
                           title: "Tanggal",
                           hintText: "Masukkan tanggal pencatatan",
                           controller: vm.dateController,
+                          readOnly: true,
                           errorText: null,
                           onTap: () {
-                            FocusManager.instance.primaryFocus?.unfocus();
                             vm.selectDate(context);
                           },
                         ),
@@ -89,9 +89,9 @@ class AddDhuwitPage extends StatelessWidget {
                           title: "Waktu",
                           hintText: "Masukkan waktu pencatatan",
                           controller: vm.timeController,
+                          readOnly: true,
                           errorText: null,
                           onTap: () {
-                            FocusManager.instance.primaryFocus?.unfocus();
                             vm.selectTime(context);
                           },
                         ),
