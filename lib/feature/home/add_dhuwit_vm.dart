@@ -207,7 +207,7 @@ class AddDhuwitVm extends BaseVm {
       final message = response['message'] as String?;
 
       if (!context.mounted) return;
-      SnackbarHelper.show(context, message ?? 'Data Berhasil di Tambah');
+      // SnackbarHelper.show(context, message ?? 'Data Berhasil di Tambah');
       showLoading(context, false);
       Navigator.pop(context, true);
     } catch (e) {

@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:dhuwitku/component/divider/divider_app.dart';
 import 'package:dhuwitku/component/navbar/navbar.dart';
 import 'package:dhuwitku/core/ui/app_colors.dart';
@@ -53,25 +51,24 @@ class AccountPage extends StatelessWidget {
                             ),
                             child: Column(
                               children: [
-                                _buildProfileMenuItem(
-                                  title: "Keamanan & Privasi",
-                                  iconPath: AppImages.icCircleSecurity,
-                                  onTap: () {},
-                                ),
-                                SizedBox(height: 12),
+                                // _buildProfileMenuItem(
+                                //   title: "Keamanan & Privasi",
+                                //   iconPath: AppImages.icCircleSecurity,
+                                //   onTap: () {},
+                                // ),
+                                // SizedBox(height: 12),
 
-                                _buildProfileMenuItem(
-                                  title: "Syarat dan Ketentuan",
-                                  iconPath: AppImages.icCircleReport,
-                                  onTap: () {
-                                    // vm.openWebTermCondition();
-                                  },
-                                ),
+                                // _buildProfileMenuItem(
+                                //   title: "Syarat dan Ketentuan",
+                                //   iconPath: AppImages.icCircleReport,
+                                //   onTap: () {
+                                //     // vm.openWebTermCondition();
+                                //   },
+                                // ),
 
-                                SizedBox(height: 16),
-                                DividerApp(lineColor: AppColors.lightGrey),
-                                SizedBox(height: 16),
-
+                                // SizedBox(height: 16),
+                                // DividerApp(lineColor: AppColors.lightGrey),
+                                // SizedBox(height: 16),
                                 _buildLogoutItem(
                                   onTap: () {
                                     vm.logout();

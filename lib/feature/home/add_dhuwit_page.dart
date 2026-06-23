@@ -79,6 +79,7 @@ class AddDhuwitPage extends StatelessWidget {
                           controller: vm.dateController,
                           errorText: null,
                           onTap: () {
+                            FocusManager.instance.primaryFocus?.unfocus();
                             vm.selectDate(context);
                           },
                         ),
@@ -90,6 +91,7 @@ class AddDhuwitPage extends StatelessWidget {
                           controller: vm.timeController,
                           errorText: null,
                           onTap: () {
+                            FocusManager.instance.primaryFocus?.unfocus();
                             vm.selectTime(context);
                           },
                         ),

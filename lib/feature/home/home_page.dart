@@ -12,6 +12,7 @@ import 'package:dhuwitku/feature/report/report_page.dart';
 import 'package:dhuwitku/util/extension/date_extension.dart';
 import 'package:dhuwitku/util/extension/int_extension.dart';
 import 'package:dhuwitku/util/extension/string_extension.dart';
+import 'package:dhuwitku/util/helper/platform_checker.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -229,7 +230,12 @@ class _HomePageState extends State<HomePage> with RouteAware {
         filter: ImageFilter.blur(sigmaX: 20, sigmaY: 20),
         child: Container(
           width: double.infinity,
-          padding: const EdgeInsets.only(left: 16, right: 16, top: 16),
+          padding: EdgeInsets.only(
+            left: 16,
+            right: 16,
+            top: 16,
+            bottom: isDesktopWeb(context) ? 72 : 0,
+          ),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(32),
             color: Colors.white.withValues(alpha: 0.10),
