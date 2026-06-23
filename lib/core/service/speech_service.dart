@@ -13,6 +13,7 @@ class SpeechService {
   bool _isInitialized = false;
   String? _localeId;
   Timer? _silenceTimer;
+  String _lastWords = '';
 
   bool get isListening => _speech.isListening;
 
@@ -63,11 +64,17 @@ class SpeechService {
     await _speech.listen(
       listenOptions: SpeechListenOptions(localeId: _localeId),
       onResult: (result) {
+        if (result.recognizedWords == _lastWords) {
+          return;
+        }
+
+        _lastWords = result.recognizedWords;
         onResult(result.recognizedWords);
 
         _silenceTimer?.cancel();
 
         _silenceTimer = Timer(Duration(seconds: 3), () async {
+          _lastWords = '';
           await _speech.stop();
           onStop?.call();
         });
@@ -76,6 +83,7 @@ class SpeechService {
   }
 
   Future<void> stopListening() async {
+    _lastWords = '';
     await _speech.stop();
   }
 }

@@ -82,8 +82,10 @@ void showMicBottomSheet({
                   GestureDetector(
                     onTap: () {
                       if (vm.isListening) {
+                        print('tesssss');
                         vm.stopListening();
                       } else {
+                        print('tesssss2');
                         vm.onTapMic();
                       }
                     },
