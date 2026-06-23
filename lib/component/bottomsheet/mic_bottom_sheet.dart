@@ -50,11 +50,22 @@ void showMicBottomSheet({
                   // Title + Close
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      TextApp.h5(
-                        'Catat dengan Suara',
-                        fontWeight: FontWeight.bold,
-                        color: AppColors.tundora,
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          TextApp.h5(
+                            'Catat dengan Suara',
+                            fontWeight: FontWeight.bold,
+                            color: AppColors.tundora,
+                          ),
+                          const SizedBox(height: 4),
+                          TextApp.small(
+                            'Stop otomatis saat kamu berhenti berbicara',
+                            color: AppColors.grey,
+                          ),
+                        ],
                       ),
                       GestureDetector(
                         onTap: () {

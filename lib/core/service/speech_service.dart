@@ -1,3 +1,6 @@
+import 'dart:async';
+
+import 'package:flutter/foundation.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 
 class SpeechService {
@@ -9,6 +12,7 @@ class SpeechService {
 
   bool _isInitialized = false;
   String? _localeId;
+  Timer? _silenceTimer;
 
   bool get isListening => _speech.isListening;
 
@@ -25,29 +29,29 @@ class SpeechService {
 
     final locales = await _speech.locales();
 
-    // Debug: lihat semua locale yang tersedia
-    for (final locale in locales) {
-      print('Speech locale: ${locale.localeId} - ${locale.name}');
-    }
+    final indonesiaLocale = locales
+        .where((locale) {
+          final id = locale.localeId.toLowerCase();
+          return id.startsWith('id');
+        })
+        .cast()
+        .cast<dynamic>()
+        .firstOrNull;
 
-    // Cari bahasa Indonesia
-    final indonesiaLocale = locales.where((locale) {
-      final id = locale.localeId.toLowerCase();
-
-      return id == 'id_id' || id == 'id-id' || id.startsWith('id');
-    });
-
-    if (indonesiaLocale.isNotEmpty) {
-      _localeId = indonesiaLocale.first.localeId;
-      print('Using locale: $_localeId');
+    if (indonesiaLocale != null) {
+      _localeId = indonesiaLocale.localeId;
+      print('Using detected locale: $_localeId');
     } else {
-      print('Indonesian locale not found. Using browser default language.');
+      _localeId = 'id-ID';
+      print('No Indonesian locale found, fallback to $_localeId');
     }
-
     return true;
   }
 
-  Future<void> startListening({required Function(String text) onResult}) async {
+  Future<void> startListening({
+    required Function(String text) onResult,
+    VoidCallback? onStop,
+  }) async {
     if (!_isInitialized) {
       final success = await initSpeech();
 
@@ -60,6 +64,13 @@ class SpeechService {
       listenOptions: SpeechListenOptions(localeId: _localeId),
       onResult: (result) {
         onResult(result.recognizedWords);
+
+        _silenceTimer?.cancel();
+
+        _silenceTimer = Timer(Duration(seconds: 3), () async {
+          await _speech.stop();
+          onStop?.call();
+        });
       },
     );
   }
