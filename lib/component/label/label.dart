@@ -46,7 +46,7 @@ class Label extends StatelessWidget {
         break;
 
       case LabelColor.grey:
-        textColor = AppColors.darkGrey;
+        textColor = AppColors.grey;
         borderColor = AppColors.grey.withValues(alpha: 1);
         break;
     }
