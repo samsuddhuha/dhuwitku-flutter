@@ -51,6 +51,7 @@ class SpeechService {
 
   Future<void> startListening({
     required Function(String text) onResult,
+    required Function(String text) onPreview,
     VoidCallback? onStop,
   }) async {
     if (!_isInitialized) {
@@ -63,21 +64,25 @@ class SpeechService {
 
     await _speech.listen(
       listenOptions: SpeechListenOptions(localeId: _localeId),
-      onResult: (result) {
+      onResult: (result) async {
+        if (result.finalResult) {
+          onResult(result.recognizedWords);
+
+          _lastWords = '';
+
+          onStop?.call();
+
+          await _speech.stop();
+
+          return;
+        }
+
         if (result.recognizedWords == _lastWords) {
           return;
         }
 
         _lastWords = result.recognizedWords;
-        onResult(result.recognizedWords);
-
-        _silenceTimer?.cancel();
-
-        _silenceTimer = Timer(Duration(seconds: 3), () async {
-          _lastWords = '';
-          await _speech.stop();
-          onStop?.call();
-        });
+        onPreview(result.recognizedWords);
       },
     );
   }

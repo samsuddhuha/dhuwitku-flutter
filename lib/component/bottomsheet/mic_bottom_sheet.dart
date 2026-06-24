@@ -62,7 +62,7 @@ void showMicBottomSheet({
                           ),
                           const SizedBox(height: 4),
                           TextApp.small(
-                            'Stop otomatis saat kamu berhenti berbicara',
+                            'Berhenti otomatis saat selesai berbicara',
                             color: AppColors.grey,
                           ),
                         ],
@@ -82,10 +82,8 @@ void showMicBottomSheet({
                   GestureDetector(
                     onTap: () {
                       if (vm.isListening) {
-                        print('tesssss');
                         vm.stopListening();
                       } else {
-                        print('tesssss2');
                         vm.onTapMic();
                       }
                     },

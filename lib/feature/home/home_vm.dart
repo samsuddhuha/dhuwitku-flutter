@@ -104,6 +104,10 @@ class HomeVm extends BaseVm {
         speechText = text;
         notifyListeners();
       },
+      onPreview: (text) {
+        speechText = text;
+        notifyListeners();
+      },
       onStop: () {
         isListening = false;
         notifyListeners();

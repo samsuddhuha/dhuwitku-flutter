@@ -100,6 +100,7 @@ class InputDropdown extends StatelessWidget {
               controller: controller,
               errorText: errorText,
               enabled: enabled,
+              readOnly: true,
               leftIconPath: leftIconPath,
               rightIconPath: rightIconPath,
               onTap: () {
