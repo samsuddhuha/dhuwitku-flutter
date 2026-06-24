@@ -65,14 +65,22 @@ class SpeechService {
     await _speech.listen(
       listenOptions: SpeechListenOptions(localeId: _localeId),
       onResult: (result) async {
+        _silenceTimer?.cancel();
+        _silenceTimer = Timer(const Duration(seconds: 3), () async {
+          if (_speech.isListening) {
+            await _speech.stop();
+            onStop?.call();
+          }
+        });
+
         if (result.finalResult) {
           onResult(result.recognizedWords);
 
           _lastWords = '';
-
-          onStop?.call();
+          _silenceTimer?.cancel();
 
           await _speech.stop();
+          onStop?.call();
 
           return;
         }
