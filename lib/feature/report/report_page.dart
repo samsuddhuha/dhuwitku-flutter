@@ -98,13 +98,14 @@ class _ReportPageState extends State<ReportPage> with RouteAware {
                           Label(
                             text: 'Semua',
                             size: LabelSize.medium,
-                            color: vm.incomeActive && vm.spendActive
+                            color: vm.allStatusActive
                                 ? LabelColor.green
                                 : LabelColor.grey,
                             onTap: () {
                               vm.updateSelectedFilter(
-                                incomeActive: true,
-                                spendActive: true,
+                                allStatusActive: true,
+                                incomeActive: false,
+                                spendActive: false,
                               );
                             },
                           ),
@@ -117,6 +118,7 @@ class _ReportPageState extends State<ReportPage> with RouteAware {
                                 : LabelColor.grey,
                             onTap: () {
                               vm.updateSelectedFilter(
+                                allStatusActive: false,
                                 incomeActive: true,
                                 spendActive: false,
                               );
@@ -131,6 +133,7 @@ class _ReportPageState extends State<ReportPage> with RouteAware {
                                 : LabelColor.grey,
                             onTap: () {
                               vm.updateSelectedFilter(
+                                allStatusActive: false,
                                 incomeActive: false,
                                 spendActive: true,
                               );

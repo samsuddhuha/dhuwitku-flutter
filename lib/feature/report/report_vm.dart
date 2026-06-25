@@ -31,8 +31,9 @@ class ReportVm extends BaseVm {
 
   late int selectedMonth;
   late int selectedYear;
-  bool incomeActive = true;
-  bool spendActive = true;
+  bool allStatusActive = true;
+  bool incomeActive = false;
+  bool spendActive = false;
 
   Future<void> init() async {
     final now = DateTime.now();
@@ -114,9 +115,11 @@ class ReportVm extends BaseVm {
   }
 
   void updateSelectedFilter({
+    required bool allStatusActive,
     required bool incomeActive,
     required bool spendActive,
   }) {
+    this.allStatusActive = allStatusActive;
     this.incomeActive = incomeActive;
     this.spendActive = spendActive;
 
@@ -126,7 +129,7 @@ class ReportVm extends BaseVm {
   }
 
   void updateListDhuwit() {
-    if (incomeActive && spendActive) {
+    if (allStatusActive) {
       listHistoryDhuwit = List.from(allHistoryDhuwit);
     } else if (incomeActive) {
       listHistoryDhuwit = allHistoryDhuwit
