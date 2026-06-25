@@ -1,7 +1,3 @@
-import 'dart:ui';
-
-import 'package:dhuwitku/component/divider/divider_app.dart';
-import 'package:dhuwitku/component/field/input_dropdown.dart';
 import 'package:dhuwitku/component/field/input_field.dart';
 import 'package:dhuwitku/component/label/label.dart';
 import 'package:dhuwitku/component/navbar/navbar.dart';
@@ -196,7 +192,7 @@ class _ReportPageState extends State<ReportPage> with RouteAware {
                           ),
                           SizedBox(height: 4),
                           vm.isLoadingCard
-                              ? shimmerView(height: 19)
+                              ? shimmerView(height: 19, width: 120)
                               : TextApp.body(
                                   vm.getMonthlyIncomeText(),
                                   textAlign: TextAlign.end,
@@ -229,7 +225,7 @@ class _ReportPageState extends State<ReportPage> with RouteAware {
                           ),
                           SizedBox(height: 4),
                           vm.isLoadingCard
-                              ? shimmerView(height: 19)
+                              ? shimmerView(height: 19, width: 120)
                               : TextApp.body(
                                   vm.getMonthlySpendText(),
                                   textAlign: TextAlign.end,
